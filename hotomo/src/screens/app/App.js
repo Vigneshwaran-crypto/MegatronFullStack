@@ -1,8 +1,10 @@
 import React, {useEffect} from 'react';
 import {Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useDispatch} from 'react-redux';
-import {apiCallAndStore} from './src/redux/middleware';
-import {testAction} from './src/redux/authAction';
+import {apiCallAndStore} from '../../redux/middleware';
+import {testAction} from '../../redux/authAction';
+import Feather from 'react-native-vector-icons/Feather';
+import Router from '../../router/Router';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -21,7 +23,9 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text>Welcome To The New Architecture</Text>
+      <View style={styles.container}>
+        <Router />
+      </View>
     </SafeAreaView>
   );
 };
@@ -29,7 +33,8 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'green',
+    height: '100%',
+    width: '100%',
   },
 });
 
