@@ -1,13 +1,16 @@
 import React, {useEffect} from 'react';
 import {Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {useDispatch} from 'react-redux';
+import {apiCallAndStore} from './src/redux/middleware';
+import {testAction} from './src/redux/authAction';
 
 const App = () => {
+  const dispatch = useDispatch();
+
   useEffect(() => {
     console.log('Hello Vingesh Waran');
 
-    console.log('Hello developer Im new Architecture');
-
-    console.log('Changed all');
+    dispatch(apiCallAndStore(testAction()));
 
     if (Platform.OS === 'android') {
       console.log('Hello This Is ANDROID DEVICE yes changed');
