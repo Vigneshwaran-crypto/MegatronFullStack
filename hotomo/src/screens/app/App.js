@@ -7,20 +7,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import Router from '../../router/Router';
 
 const App = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log('Hello Vingesh Waran');
-
-    dispatch(apiCallAndStore(testAction()));
-
-    if (Platform.OS === 'android') {
-      console.log('Hello This Is ANDROID DEVICE yes changed');
-    } else {
-      console.log('Hello This Is IOS DEVICE absolutely');
-    }
-  }, []);
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
