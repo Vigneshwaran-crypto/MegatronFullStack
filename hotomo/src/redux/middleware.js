@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {GET_API_DATA, HTTP, staticValues} from '../common/constant';
+import {GET_API_DATA, HTTP, serverUrl, staticValues} from '../common/constant';
 import {LOG} from '../common/utils';
 
 const axios = require('axios').default;
@@ -7,7 +7,7 @@ const axios = require('axios').default;
 export const apiCallAndStore = createAsyncThunk(
   GET_API_DATA,
   async (action, {dispatch, getState, rejectWithValue}) => {
-    LOG('API_CALL_TYPE:', action.requestType);
+    LOG('Api Request Type:', action.requestType);
 
     try {
       if (action.type === GET_API_DATA) {
@@ -26,33 +26,37 @@ export const apiCallAndStore = createAsyncThunk(
 
         const apiConfig = {
           method: method,
-          url: action.requestUrl.trim(),
+          url: serverUrl + action.requestUrl.trim(),
           data: reqData,
           headers: header,
         };
 
-        const apiRes = await axios(apiConfig, {timeout: 3});
-        LOG('api response :', apiRes);
+        LOG('Axios config ====>', apiConfig);
 
-        switch (action.requestType) {
-          case staticValues.apiTest:
-            break;
+        const apiRes = await axios(apiConfig);
+        LOG('Axios Response ====>', apiRes);
+        LOG('Status Code :' + apiRes.status);
 
-          default:
-            break;
-        }
+        // switch (action.requestType) {
+        //   case staticValues.apiTest:
+        //     break;
+
+        //   default:
+        //     break;
+        // }
 
         return {
           requestType: action.requestType,
           requestData: action.jsonData,
-          jsonData: apiRes.data,
+          jsonData: apiRes.data.data,
           extraData: action.extraData,
+          state: getState(),
         };
       } else {
         return action;
       }
     } catch (err) {
-      LOG('API_DATA_ERROR :', err);
+      LOG('API_DATA_ERROR :', err.message);
     }
   },
 );
@@ -60,6 +64,7 @@ export const apiCallAndStore = createAsyncThunk(
 const initialState = {
   loading: false,
   posts: [],
+  userDetails: {},
 };
 
 const mainSlice = createSlice({
@@ -70,12 +75,11 @@ const mainSlice = createSlice({
       state.loading = true;
     });
 
-    builder.addCase(apiCallAndStore.fulfilled, (state, action) => {
-      LOG('apiCallAndStore.fulfilled :', action);
-
-      switch (action.payload.requestType) {
-        case staticValues.getAllPost:
-          state.posts = action.payload.jsonData;
+    builder.addCase(apiCallAndStore.fulfilled, (state, {payload}) => {
+      switch (payload.requestType) {
+        case staticValues.logIn:
+          LOG('getAllPost_in_middleware :', payload);
+          state.userDetails = payload.jsonData;
           break;
       }
     });

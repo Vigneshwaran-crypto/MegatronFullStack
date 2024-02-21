@@ -9,7 +9,7 @@ const Home = () => {
 
   useEffect(() => {
     console.log('Hello Vingesh Waran');
-    dispatch(apiCallAndStore(testAction()));
+    // dispatch(apiCallAndStore(testAction()));
   }, []);
 
   return (

@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import bodyParser from "body-parser";
+import morgan from "morgan";
 
 import router from "./Routes/router.js";
 
@@ -14,12 +15,15 @@ app.use(bodyParser.urlencoded({ limit: "32mb", extended: true }));
 //CORS is a security feature implemented by web browsers to prevent cross-origin requests
 app.use(cors());
 
-//localhost:2000/api
+//moran is a logger
+app.use(morgan("dev"));
+
+//localhost:5000/api
 app.use("/api", router); //routing hits according to the api's
 
 //connection url from mongodb/atlas site (mongodb's official site)
 const CONNECTION_URL = `mongodb+srv://vigneshdev8055:VigneshDev8055@cluster0.dasrarw.mongodb.net/?retryWrites=true&w=majority`;
-const PORT = process.env.PORT || 2000;
+const PORT = process.env.PORT || 5000;
 
 //connecting mongodb server using mongoose
 
