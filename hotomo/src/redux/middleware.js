@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {GET_API_DATA, HTTP, serverUrl, staticValues} from '../common/constant';
-import {LOG} from '../common/utils';
+import {LOG, Toast} from '../common/utils';
+import * as RootNav from '../router/RootNav';
 
 const axios = require('axios').default;
 
@@ -49,6 +50,18 @@ export const apiCallAndStore = createAsyncThunk(
               goNext = true;
             }
             // goNext = true
+            break;
+
+          case staticValues.logIn:
+            LOG('logIn_in_middleware :', apiResData);
+
+            if (apiResData.status === 1) {
+              goNext = true;
+              RootNav.navigate('homeTab');
+            } else {
+              Toast('Enter valid credential');
+            }
+
             break;
 
           default:

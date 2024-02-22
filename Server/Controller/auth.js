@@ -77,9 +77,10 @@ export const signUp = async (req, res) => {
 
 export const signIn = async (req, res) => {
   try {
-    const { email, password } = res.body;
-
+    const { email, password } = req.body;
     const user = await User.findOne({ email }); //is user in DB
+
+    console.log("user from db in signIn :", user);
 
     if (!user) {
       return res
@@ -91,7 +92,7 @@ export const signIn = async (req, res) => {
 
     if (!isMatched) {
       return res
-        .status(401)
+        .status(200)
         .json({ data: {}, message: resMessages.missMatchedPass, status: 0 });
     }
 
@@ -109,6 +110,11 @@ export const signIn = async (req, res) => {
       .json({ data: resWithTok, message: resMessages.success, status: 1 });
   } catch (err) {
     console.log("error occurred in signIn :", err);
+    res.status(500).json({
+      data: {},
+      message: resMessages.serverError,
+      status: 0,
+    });
   }
 };
 
@@ -121,7 +127,7 @@ export const forgotPassword = async (req, res) => {
 
     if (!user) {
       return res
-        .status(402)
+        .status(200)
         .json({ data: {}, message: resMessages.userNotFound, status: 0 });
     }
 
@@ -185,7 +191,7 @@ export const resetPassword = async (req, res) => {
 
     if (password.length < 5) {
       return res
-        .status(401)
+        .status(200)
         .json({ data: {}, message: resMessages.strongPassword, status: 0 });
     }
 
