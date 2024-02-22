@@ -17,3 +17,13 @@ export const logIn = jsonData => {
     noAuth: true,
   };
 };
+
+export const createUser = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.createUser,
+    requestUrl: HTTP.CREATE_USER,
+    jsonData,
+    noAuth: true,
+  };
+};

@@ -37,21 +37,34 @@ export const apiCallAndStore = createAsyncThunk(
         LOG('Axios Response ====>', apiRes);
         LOG('Status Code :' + apiRes.status);
 
-        // switch (action.requestType) {
-        //   case staticValues.apiTest:
-        //     break;
+        const apiResData = apiRes.data;
 
-        //   default:
-        //     break;
-        // }
+        let goNext = false;
 
-        return {
-          requestType: action.requestType,
-          requestData: action.jsonData,
-          jsonData: apiRes.data.data,
-          extraData: action.extraData,
-          state: getState(),
-        };
+        switch (action.requestType) {
+          case staticValues.createUser:
+            LOG('createUser_in_middleware :', apiResData);
+
+            if (apiResData.status === 1) {
+              goNext = true;
+            }
+            // goNext = true
+            break;
+
+          default:
+            goNext = true;
+            break;
+        }
+
+        if (goNext) {
+          return {
+            requestType: action.requestType,
+            requestData: action.jsonData,
+            jsonData: apiRes.data.data,
+            extraData: action.extraData,
+            // state: getState(),
+          };
+        }
       } else {
         return action;
       }
@@ -76,15 +89,24 @@ const mainSlice = createSlice({
     });
 
     builder.addCase(apiCallAndStore.fulfilled, (state, {payload}) => {
-      switch (payload.requestType) {
-        case staticValues.logIn:
-          LOG('getAllPost_in_middleware :', payload);
-          state.userDetails = payload.jsonData;
-          break;
+      if (payload) {
+        switch (payload.requestType) {
+          case staticValues.createUser:
+            LOG('createUser_in_Reducer :', payload);
+            break;
+
+          case staticValues.logIn:
+            LOG('logIn_in_Reducer :', payload);
+            state.userDetails = payload.jsonData;
+            break;
+        }
       }
     });
 
-    builder.addCase(apiCallAndStore.rejected, (state, action) => {});
+    builder.addCase(apiCallAndStore.rejected, (state, action) => {
+      LOG('apiCallAndStore_rejected');
+      state.loading = false;
+    });
   },
 });
 

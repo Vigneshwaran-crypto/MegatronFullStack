@@ -25,4 +25,7 @@ export const resMessages = {
   unAuthorize: "unAuthorized user",
   reqError: "Request data error",
   success: "Success",
+  userNotFound: "User not found",
+  missMatchedPass: "Miss matched password",
+  strongPassword: "Enter strong password",
 };

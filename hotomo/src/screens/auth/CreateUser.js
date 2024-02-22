@@ -15,6 +15,8 @@ import {textFontFace, textFontFaceMedium} from '../../common/styles';
 
 import {useDispatch} from 'react-redux';
 import {Toast} from '../../common/utils';
+import {apiCallAndStore} from '../../redux/middleware';
+import {createUser} from '../../redux/authAction';
 
 const {width} = Dimensions.get('window');
 
@@ -22,19 +24,25 @@ const CreateUser = () => {
   const dispatch = useDispatch();
   const [isChecked, setIsChecked] = useState(false);
 
-  const [mail, setMail] = useState('');
-  const [pass, setPass] = useState('');
+  const [name, setName] = useState('');
+  const [email, setMail] = useState('');
+  const [password, setPass] = useState('');
 
   const onJoinPress = () => {
-    if (!mail) {
+    if (!name) {
+      Toast('Please enter username');
+    } else if (!email) {
       Toast('Please enter email or phone');
-    } else if (!pass) {
+    } else if (!password) {
       Toast('Please enter password');
     } else {
       const req = {
-        email: mail,
-        password: pass,
+        name,
+        email,
+        password,
       };
+
+      dispatch(apiCallAndStore(createUser(req)));
     }
   };
 
@@ -50,11 +58,19 @@ const CreateUser = () => {
 
       <View style={styles.AuthContent}>
         <View style={styles.inputContents}>
-          <Text style={styles.labelText}>Email Or Phone</Text>
+          <Text style={styles.labelText}>Username</Text>
+          <TextInput
+            style={styles.inputField}
+            onChangeText={setName}
+            value={name}
+          />
+
+          <Text style={[styles.labelText, {marginTop: 10}]}> Email</Text>
+
           <TextInput
             style={styles.inputField}
             onChangeText={setMail}
-            value={mail}
+            value={email}
           />
 
           <Text style={[styles.labelText, {marginTop: 10}]}>
@@ -64,7 +80,7 @@ const CreateUser = () => {
             style={styles.inputField}
             secureTextEntry
             onChangeText={setPass}
-            value={pass}
+            value={password}
           />
 
           <View style={styles.agreeView}>

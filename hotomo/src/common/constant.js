@@ -9,11 +9,13 @@ export const staticValues = {
   apiTest: 'apiTest',
   getAllPost: 'getAllPost',
   logIn: 'logIn',
+  createUser: 'createUser',
 };
 
 export const HTTP = {
   GET_ALL_PRODUCTS: 'https://fakestoreapi.com/products',
   LOG_IN_URL: 'login',
+  CREATE_USER: 'createUser',
 
   //headers for api call without authorization
   HEADERS: {
