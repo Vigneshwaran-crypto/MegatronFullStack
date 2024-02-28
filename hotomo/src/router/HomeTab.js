@@ -10,15 +10,19 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import Home from '../screens/homeBar/Home';
 import Chat from '../screens/homeBar/Chat';
 import Profile from '../screens/homeBar/Profile';
+import {colors} from '../common/colors';
+import {sSize} from '../common/utils';
 
 const HomeTab = () => {
   const Tab = createBottomTabNavigator();
 
+  const tabIconSize = sSize.width * 0.06;
+
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: 'pink',
-        tabBarInactiveTintColor: 'grey',
+        tabBarActiveTintColor: colors.royalBlue,
+        tabBarInactiveTintColor: colors.darkGrey,
         tabBarHideOnKeyboard: true,
         tabBarStyle: styles.tabBarContainer,
         tabBarShowLabel: false,
@@ -29,8 +33,12 @@ const HomeTab = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({focused, color, size}) => (
-            <View style={styles.tabBarIconContainer}>
-              <Feather name="home" color={color} size={28} />
+            <View style={styles.tabBarIconContainer(focused)}>
+              <Feather
+                name="home"
+                color={focused ? colors.white : colors.grey}
+                size={tabIconSize - 1}
+              />
             </View>
           ),
         }}
@@ -42,8 +50,12 @@ const HomeTab = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({focused, color, size}) => (
-            <View style={styles.tabBarIconContainer}>
-              <Fontisto name="hipchat" color={color} size={25} />
+            <View style={styles.tabBarIconContainer(focused)}>
+              <Fontisto
+                name="hipchat"
+                color={focused ? colors.white : colors.grey}
+                size={tabIconSize - 3}
+              />
             </View>
           ),
         }}
@@ -55,8 +67,12 @@ const HomeTab = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({focused, color, size}) => (
-            <View style={styles.tabBarIconContainer}>
-              <Octicons name="person" color={color} size={25} />
+            <View style={styles.tabBarIconContainer(focused)}>
+              <Octicons
+                name="person"
+                color={focused ? colors.white : colors.grey}
+                size={tabIconSize - 2}
+              />
             </View>
           ),
         }}
@@ -67,17 +83,20 @@ const HomeTab = () => {
 
 const styles = StyleSheet.create({
   tabBarContainer: {
-    // borderWidth: 1,
-    marginTop: 10,
     elevation: 0,
     zIndex: 0,
-    backgroundColor: 'black',
+    height: sSize.width * 0.14,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  tabBarIconContainer: {
-    flex: 1,
+  tabBarIconContainer: focused => ({
     alignItems: 'center',
     justifyContent: 'center',
-  },
+    height: sSize.width * 0.1,
+    width: sSize.width * 0.1,
+    borderRadius: sSize.width * 0.05,
+    backgroundColor: focused ? colors.royalBlue : colors.white,
+  }),
 });
 
 export default HomeTab;

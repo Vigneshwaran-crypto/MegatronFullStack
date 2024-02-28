@@ -3,11 +3,13 @@ import {
   comparedPassword,
   hashPassword,
   resMessages,
+  showServerError,
 } from "../Helpers/helpers.js";
 import { nanoid } from "nanoid";
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 import dotenv from "dotenv";
 import sgMail from "@sendgrid/mail";
+import bcrypt from "bcrypt";
 
 dotenv.config(); // to access .env file
 
@@ -16,24 +18,7 @@ sgMail.setApiKey(process.env.SENDGRID_KEY);
 export const signUp = async (req, res) => {
   console.log("signUp api hit", req.body);
   try {
-    const { name, email, password } = req.body;
-
-    // validation
-    if (!name) {
-      return res
-        .status(401)
-        .json({ message: "User name missing", status: 0, data: {} });
-    }
-    if (!email) {
-      return res
-        .status(401)
-        .json({ message: "Email missing", status: 0, data: {} });
-    }
-    if (!password) {
-      return res
-        .status(401)
-        .json({ message: "Password missing", status: 0, data: {} });
-    }
+    const { userName, email, password } = req.body;
 
     const isExist = await User.findOne({ email });
     if (isExist) {
@@ -45,9 +30,11 @@ export const signUp = async (req, res) => {
     // Password hashing
     const hashedPass = await hashPassword(password);
 
+    // "_id" - Auto generated Key
+
     try {
       const user = await new User({
-        name,
+        userName: email.split("@")[0], //we splitted email and added first name as userName
         email,
         password: hashedPass,
       }).save();
@@ -67,6 +54,9 @@ export const signUp = async (req, res) => {
       });
     } catch (err) {
       console.log("error occurred in signUp :", err);
+      res
+        .status(500)
+        .json({ error: err, message: resMessages.serverError, status: 0 });
     }
   } catch (err) {
     res
@@ -76,6 +66,7 @@ export const signUp = async (req, res) => {
 };
 
 export const signIn = async (req, res) => {
+  console.log("signIn api hit", req.body);
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email }); //is user in DB
@@ -103,13 +94,65 @@ export const signIn = async (req, res) => {
     user.password = undefined;
     user.secret = undefined;
 
-    const resWithTok = { ...user, token };
+    const resWithTok = user;
+
+    console.log("token appended obj :", resWithTok);
+
+    res.status(200).json({
+      data: user,
+      token,
+      message: resMessages.success,
+      status: 1,
+    });
+  } catch (err) {
+    console.log("error occurred in signIn :", err);
+    res.status(500).json({
+      data: {},
+      message: resMessages.serverError,
+      status: 0,
+    });
+  }
+};
+
+export const editUserNameOrBio = async (req, res) => {
+  console.log("editUserNameOrBio hit :", req.body);
+  console.log("editUserNameOrBio :", req.headers);
+  try {
+    const { userName, bio } = req.body;
+
+    const authToken = req.headers.authorization;
+    console.log("user token editUserNameOrBio :", authToken);
+
+    const userFromToken = decode(authToken, { json: true });
+
+    console.log("userFromToken :", userFromToken);
+
+    const user = await User.findOne({ _id: userFromToken._id });
+
+    user.bio = bio;
+    user.userName = userName;
+    user.save();
 
     res
       .status(200)
-      .json({ data: resWithTok, message: resMessages.success, status: 1 });
+      .json({ data: user, message: resMessages.success, status: 1 });
+
+    console.log("user from decoded token values :", user);
   } catch (err) {
-    console.log("error occurred in signIn :", err);
+    showServerError(res);
+  }
+};
+
+export const getAllUsers = async (req, res) => {
+  console.log("getAllUsers hit :", req.body);
+
+  try {
+    const users = await User.find({});
+
+    res
+      .status(200)
+      .json({ data: users, message: resMessages.success, status: 1 });
+  } catch (err) {
     res.status(500).json({
       data: {},
       message: resMessages.serverError,

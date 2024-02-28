@@ -1,6 +1,12 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {GET_API_DATA, HTTP, serverUrl, staticValues} from '../common/constant';
-import {LOG, Toast} from '../common/utils';
+import {
+  AuthToken,
+  GET_API_DATA,
+  HTTP,
+  serverUrl,
+  staticValues,
+} from '../common/constant';
+import {LOG, Toast, storeItem} from '../common/utils';
 import * as RootNav from '../router/RootNav';
 
 const axios = require('axios').default;
@@ -30,6 +36,7 @@ export const apiCallAndStore = createAsyncThunk(
           url: serverUrl + action.requestUrl.trim(),
           data: reqData,
           headers: header,
+          timeout: 1000 * 10, //10 seconds for timeout
         };
 
         LOG('Axios config ====>', apiConfig);
@@ -48,20 +55,35 @@ export const apiCallAndStore = createAsyncThunk(
 
             if (apiResData.status === 1) {
               goNext = true;
+              Toast('Account created successfully');
+              RootNav.navigationRef.goBack();
+            } else {
+              Toast(apiResData.message);
             }
             // goNext = true
             break;
 
           case staticValues.logIn:
             LOG('logIn_in_middleware :', apiResData);
-
             if (apiResData.status === 1) {
               goNext = true;
+              const token = apiResData.token;
+
+              HTTP.AuthHeader.Authorization = token;
+              HTTP.formDataHeader.Authorization = token;
+
+              LOG('client token in middleware :', token);
+
+              storeItem('token', token);
+
               RootNav.navigate('homeTab');
             } else {
-              Toast('Enter valid credential');
+              Toast(apiResData.message);
             }
+            break;
 
+          case staticValues.getAllUsers:
+            LOG('getAllUsers_in_middleware :', apiResData);
             break;
 
           default:
@@ -82,7 +104,8 @@ export const apiCallAndStore = createAsyncThunk(
         return action;
       }
     } catch (err) {
-      LOG('API_DATA_ERROR :', err.message);
+      LOG('API_DATA_ERROR :', err);
+      LOG('API_DATA_ERROR_MESSAGE :', err.message);
     }
   },
 );
@@ -102,6 +125,7 @@ const mainSlice = createSlice({
     });
 
     builder.addCase(apiCallAndStore.fulfilled, (state, {payload}) => {
+      state.loading = false; // making loading false
       if (payload) {
         switch (payload.requestType) {
           case staticValues.createUser:

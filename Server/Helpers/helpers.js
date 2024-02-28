@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt, { hash } from "bcrypt";
 
 export const hashPassword = (password) => {
   return new Promise((resolve, reject) => {
@@ -20,12 +20,20 @@ export const comparedPassword = (password, hash) => {
   return bcrypt.compare(password, hash);
 };
 
+export const showServerError = (res) => {
+  return res.status(500).json({
+    data: {},
+    message: resMessages.serverError,
+    status: 0,
+  });
+};
+
 export const resMessages = {
   serverError: "Internal server error",
   unAuthorize: "unAuthorized user",
   reqError: "Request data error",
   success: "Success",
   userNotFound: "User not found",
-  missMatchedPass: "Miss matched password",
+  missMatchedPass: "Mismatched password",
   strongPassword: "Enter strong password",
 };

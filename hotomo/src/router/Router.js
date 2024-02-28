@@ -35,7 +35,7 @@ const Router = () => {
           component={CreateUser}
           options={{
             headerShown: false,
-            animation: 'simple_push',
+            animation: 'slide_from_right',
           }}
         />
 

@@ -27,3 +27,22 @@ export const createUser = jsonData => {
     noAuth: true,
   };
 };
+
+export const getAllUsers = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.getAllUsers,
+    requestUrl: HTTP.GET_ALL_USERS,
+    jsonData,
+    noAuth: true,
+  };
+};
+
+export const editUserNameOrBio = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.editUserNameOrBio,
+    requestUrl: HTTP.EDIT_USERNAME_OR_BIO,
+    jsonData,
+  };
+};

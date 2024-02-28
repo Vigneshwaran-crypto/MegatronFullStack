@@ -1,6 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   StyleSheet,
@@ -17,17 +18,17 @@ import {
   textFontFaceMedium,
   textFontFaceSemiBold,
 } from '../../common/styles';
-import {LOG, Toast} from '../../common/utils';
+import {LOG, Toast, globalStyle, sSize} from '../../common/utils';
 import {apiCallAndStore} from '../../redux/middleware';
-import {logIn} from '../../redux/authAction';
-
-const {width} = Dimensions.get('window');
+import {getAllUsers, logIn} from '../../redux/authAction';
 
 const Login = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const user = useSelector(({main}) => main.userDetails);
+
+  const isLoading = useSelector(({main}) => main.loading);
 
   const [mail, setMail] = useState('');
   const [pass, setPass] = useState('');
@@ -37,8 +38,14 @@ const Login = () => {
   }, [user]);
 
   useEffect(() => {
-    setMail('vignesh@gmail.com');
-    setPass('pass12!@');
+    setMail('sela@gmail.com');
+    setPass('12345');
+
+    const mails = 'viki@gmail.com';
+
+    console.log(mails.split('@')[0]);
+
+    // dispatch(apiCallAndStore(getAllUsers({})));
   }, []);
 
   const onLogPress = () => {
@@ -79,7 +86,7 @@ const Login = () => {
           <Text style={[styles.labelText, {marginTop: 10}]}>Password</Text>
           <TextInput
             style={styles.inputField}
-            secureTextEntry
+            // secureTextEntry
             onChangeText={setPass}
             value={pass}
           />
@@ -105,6 +112,13 @@ const Login = () => {
           </TouchableOpacity>
         </View>
       </View>
+
+      <ActivityIndicator
+        animating={isLoading}
+        color={colors.royalBlue}
+        size={'large'}
+        style={globalStyle.loader}
+      />
     </View>
   );
 };
@@ -162,7 +176,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   gradBG: {
-    width: width * 0.3,
+    width: sSize.width * 0.3,
     paddingVertical: 10,
     borderRadius: 8,
   },

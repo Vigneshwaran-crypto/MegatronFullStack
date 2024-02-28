@@ -1,5 +1,7 @@
-import {Alert, Platform, ToastAndroid} from 'react-native';
+import {Alert, Dimensions, Platform, ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const {height, width} = Dimensions.get('window');
 
 export const LOG = (str, val) => {
   if (val) {
@@ -59,4 +61,19 @@ export const removeItem = async key => {
     LOG('ERROR ' + JSON.stringify(e));
     return null;
   }
+};
+
+export const sSize = {
+  width,
+  height,
+};
+
+export const globalStyle = {
+  loader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: sSize.height * 0.07,
+  },
 };

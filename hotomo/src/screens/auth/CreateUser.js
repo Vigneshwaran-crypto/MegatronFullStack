@@ -11,10 +11,14 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {Checkbox} from 'react-native-paper';
 import {colors} from '../../common/colors';
-import {textFontFace, textFontFaceMedium} from '../../common/styles';
+import {
+  textFontFace,
+  textFontFaceMedium,
+  textFontFaceSemiBold,
+} from '../../common/styles';
 
 import {useDispatch} from 'react-redux';
-import {Toast} from '../../common/utils';
+import {Toast, sSize} from '../../common/utils';
 import {apiCallAndStore} from '../../redux/middleware';
 import {createUser} from '../../redux/authAction';
 
@@ -24,21 +28,17 @@ const CreateUser = () => {
   const dispatch = useDispatch();
   const [isChecked, setIsChecked] = useState(false);
 
-  const [name, setName] = useState('');
   const [email, setMail] = useState('');
   const [password, setPass] = useState('');
 
   const onJoinPress = () => {
-    if (!name) {
-      Toast('Please enter username');
-    } else if (!email) {
+    if (!email) {
       Toast('Please enter email or phone');
     } else if (!password) {
       Toast('Please enter password');
     } else {
       const req = {
-        name,
-        email,
+        email: email.toLocaleLowerCase(),
         password,
       };
 
@@ -57,16 +57,10 @@ const CreateUser = () => {
       </View>
 
       <View style={styles.AuthContent}>
+        <Text style={styles.sTitle}> Create User </Text>
+
         <View style={styles.inputContents}>
-          <Text style={styles.labelText}>Username</Text>
-          <TextInput
-            style={styles.inputField}
-            onChangeText={setName}
-            value={name}
-          />
-
-          <Text style={[styles.labelText, {marginTop: 10}]}> Email</Text>
-
+          <Text style={styles.labelText}>Email</Text>
           <TextInput
             style={styles.inputField}
             onChangeText={setMail}
@@ -138,9 +132,14 @@ const styles = StyleSheet.create({
 
   inputContents: {
     flex: 2,
-
     width: '70%',
     justifyContent: 'center',
+  },
+
+  sTitle: {
+    fontFamily: textFontFaceSemiBold,
+    color: colors.darkBlue,
+    fontSize: sSize.width * 0.05,
   },
 
   labelText: {

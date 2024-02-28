@@ -4,10 +4,8 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema(
   {
-    // _id: Schema.Types.ObjectId,
-    name: {
+    userName: {
       type: String,
-      required: true,
       trim: true,
     },
     email: {
@@ -25,6 +23,10 @@ const userSchema = new Schema(
     role: {
       type: String,
       default: "Subscriber",
+    },
+    bio: {
+      type: String,
+      max: 200,
     },
     image: {
       public_id: Schema.Types.ObjectId,

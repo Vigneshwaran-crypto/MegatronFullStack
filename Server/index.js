@@ -22,7 +22,8 @@ app.use(morgan("dev"));
 app.use("/api", router); //routing hits according to the api's
 
 //connection url from mongodb/atlas site (mongodb's official site)
-const CONNECTION_URL = `mongodb+srv://vigneshdev8055:VigneshDev8055@cluster0.dasrarw.mongodb.net/?retryWrites=true&w=majority`;
+// const CONNECTION_URL = `mongodb+srv://vigneshdev8055:VigneshDev8055@cluster0.dasrarw.mongodb.net/?retryWrites=true&w=majority`;
+const CONNECTION_URL = process.env.DATABASE;
 const PORT = process.env.PORT || 5000;
 
 //connecting mongodb server using mongoose
