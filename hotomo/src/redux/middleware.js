@@ -60,7 +60,6 @@ export const apiCallAndStore = createAsyncThunk(
             } else {
               Toast(apiResData.message);
             }
-            // goNext = true
             break;
 
           case staticValues.logIn:
@@ -72,8 +71,6 @@ export const apiCallAndStore = createAsyncThunk(
               HTTP.AuthHeader.Authorization = token;
               HTTP.formDataHeader.Authorization = token;
 
-              LOG('client token in middleware :', token);
-
               storeItem('token', token);
 
               RootNav.navigate('homeTab');
@@ -84,6 +81,20 @@ export const apiCallAndStore = createAsyncThunk(
 
           case staticValues.getAllUsers:
             LOG('getAllUsers_in_middleware :', apiResData);
+            break;
+
+          case staticValues.editUserNameOrBio:
+            LOG('editUserNameOrBio_in_middleware :', apiResData);
+            if (apiResData.status === 1) {
+              goNext = true;
+            }
+            break;
+
+          case staticValues.userImagesUpload:
+            LOG('userImagesUpload_in_middleware :', apiResData);
+            if (apiResData.status === 1) {
+              goNext = true;
+            }
             break;
 
           default:
@@ -134,6 +145,16 @@ const mainSlice = createSlice({
 
           case staticValues.logIn:
             LOG('logIn_in_Reducer :', payload);
+            state.userDetails = payload.jsonData;
+            break;
+
+          case staticValues.editUserNameOrBio:
+            LOG('editUserNameOrBio_in_Reducer :', payload);
+            state.userDetails = {...state.userDetails, ...payload.jsonData}; //adding two objects
+            break;
+
+          case staticValues.userImagesUpload:
+            LOG('userImagesUpload_in_Reducer :', payload);
             state.userDetails = payload.jsonData;
             break;
         }

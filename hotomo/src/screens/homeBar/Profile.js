@@ -1,12 +1,14 @@
 import {
   Image,
-  KeyboardAvoidingView,
+  Keyboard,
   StyleSheet,
   Text,
   TextInput,
+  Touchable,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {colors} from '../../common/colors';
 import {LOG, sSize} from '../../common/utils';
 import {
@@ -16,74 +18,158 @@ import {
 } from '../../common/styles';
 import {useDispatch, useSelector} from 'react-redux';
 import {apiCallAndStore} from '../../redux/middleware';
-import {editUserNameOrBio} from '../../redux/authAction';
+import {editUserNameOrBio, userImagesUpload} from '../../redux/authAction';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
+import {serverUrl} from '../../common/constant';
 
 const Profile = () => {
   const dispatch = useDispatch();
   const userDetails = useSelector(({main}) => main.userDetails);
 
   const [bio, setBio] = useState('');
-  const [name, setName] = useState(userDetails.userName);
+  const [name, setName] = useState('');
+
+  const [isKeyboard, setIsKeyboard] = useState(false);
+
+  const imageEditRB = useRef();
+
+  const imageUri = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${userDetails.profileImage}`;
+
+  const staticS =
+    'http://172.16.16.31:5000/api/Users/admin/Desktop/Vignesh/imageBank/1709209056472-480040326.jpg';
 
   useEffect(() => {
+    LOG('image uri sample :', imageUri);
+
     LOG('userDeTails in profile :', userDetails);
+    if (Object.keys(userDetails).length !== 0) {
+      setBio(userDetails.bio);
+      setName(userDetails.userName);
+    }
+
+    launchImageLibrary;
   }, [userDetails]);
 
-  const onUserNameSubmit = () => {
-    LOG('userName edited submitted');
-  };
+  useEffect(() => {
+    const openedKeyboard = Keyboard.addListener('keyboardDidShow', () =>
+      setIsKeyboard(true),
+    );
+    const hideKeyboard = Keyboard.addListener('keyboardDidHide', () =>
+      setIsKeyboard(false),
+    );
 
-  const onBioSubmit = () => {
-    LOG('userName Bio submitted');
+    return () => {
+      openedKeyboard.remove();
+      hideKeyboard.remove();
+    };
+  }, []);
 
+  const onBioUserNameSubmit = () => {
     const req = {
       userName: name,
       bio,
     };
-
     dispatch(apiCallAndStore(editUserNameOrBio(req)));
+  };
+
+  const onEditImagePress = to => {
+    imageEditRB.current.open();
+  };
+
+  const onImagePress = async is => {
+    let imageProp = {};
+    // cameraPress
+    if (is === 0) {
+      const capturedImage = await launchCamera({
+        saveToPhotos: true,
+        quality: 1,
+        mediaType: 'photo',
+        presentationStyle: 'currentContext',
+      });
+
+      imageProp = capturedImage.assets[0];
+    } else {
+      const chosenImage = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 1,
+        presentationStyle: 'currentContext',
+        assetRepresentationMode: 'compatible',
+        selectionLimit: 1,
+      });
+
+      imageProp = chosenImage.assets[0];
+    }
+
+    const imgJson = {
+      uri: imageProp.uri,
+      type: imageProp.type,
+      name: imageProp.fileName,
+    };
+
+    LOG('imageJson :', imgJson);
+
+    const uploadForm = new FormData();
+
+    uploadForm.append('fileData', imgJson);
+
+    dispatch(apiCallAndStore(userImagesUpload(uploadForm)));
+    imageEditRB.current.close();
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.profileCont}>
         <View style={styles.coverImageCont}>
-          <Image
-            source={require('../../../assets/Images/catCover.jpg')}
-            resizeMode="cover"
-            style={styles.coverImage}
-          />
-
-          <View style={styles.profileImageView}>
+          <TouchableOpacity onPress={onEditImagePress}>
             <Image
-              source={require('../../../assets/appIcons/profileImg.jpg')}
+              source={require('../../../assets/Images/catCover.jpg')}
+              resizeMode="cover"
+              style={styles.coverImage}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={onEditImagePress}
+            style={[
+              styles.profileImageView,
+              {display: isKeyboard ? 'none' : 'flex'},
+            ]}>
+            <Image
+              // source={require('../../../assets/appIcons/profileImg.jpg')}
+              source={{uri: imageUri}}
               style={styles.profileImage}
             />
-          </View>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.profileContView}>
-          <View style={styles.followersView}>
+          {/* separator */}
+          <View style={styles.followersView} />
+
+          <View
+            style={[
+              styles.followersView,
+              {display: isKeyboard ? 'none' : 'flex'},
+            ]}>
             <Text style={styles.countText}>56k</Text>
             <Text style={styles.followerText}>Followers</Text>
           </View>
 
-          {/* separator */}
-          <View style={styles.followersView} />
-
           <View style={styles.followersView}>
-            <Text style={styles.countText}>56k</Text>
+            <Text style={styles.countText}>10</Text>
             <Text style={styles.followerText}>Following</Text>
           </View>
 
           <View style={styles.userCont}>
             <TextInput
               style={styles.userNameText}
-              placeholder="Write bio"
               maxLength={30}
               onChangeText={setName}
               value={name}
-              onSubmitEditing={onUserNameSubmit}
+              onSubmitEditing={onBioUserNameSubmit}
             />
             <TextInput
               style={styles.bioText}
@@ -91,12 +177,45 @@ const Profile = () => {
               maxLength={45}
               onChangeText={setBio}
               value={bio}
-              onSubmitEditing={onBioSubmit}
+              onSubmitEditing={onBioUserNameSubmit}
+              numberOfLines={1}
+              multiline={false}
             />
           </View>
         </View>
       </View>
       <View style={styles.postCont}></View>
+
+      <RBSheet
+        ref={imageEditRB}
+        height={sSize.height / 7}
+        animationType="fade"
+        customStyles={{
+          container: styles.rbContainer,
+          wrapper: styles.rnWrapper,
+        }}>
+        <TouchableOpacity
+          style={styles.imageButtonCombo}
+          onPress={onImagePress.bind(this, 0)}>
+          <Feather
+            name={'camera'}
+            size={sSize.width * 0.07}
+            color={colors.royalBlue}
+          />
+          <Text style={styles.camText}>Camera</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.imageButtonCombo}
+          onPress={onImagePress.bind(this, 1)}>
+          <Feather
+            name={'folder'}
+            size={sSize.width * 0.07}
+            color={colors.royalBlue}
+          />
+          <Text style={styles.camText}>Upload</Text>
+        </TouchableOpacity>
+      </RBSheet>
     </View>
   );
 };
@@ -115,16 +234,16 @@ const styles = StyleSheet.create({
   coverImage: {height: '100%', width: '100%'},
   profileImageView: {
     position: 'absolute',
-    zIndex: 2,
     height: sSize.width * 0.3,
     width: sSize.width * 0.3,
     borderRadius: sSize.width * 0.15,
-    backgroundColor: colors.red,
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
     bottom: -sSize.width * 0.15,
+    start: sSize.width * 0.04,
     elevation: 3,
     zIndex: 3,
     shadowColor: colors.black,
+    backgroundColor: colors.white,
   },
   profileImage: {
     height: sSize.width * 0.3,
@@ -158,31 +277,47 @@ const styles = StyleSheet.create({
     flex: 1,
     borderColor: colors.red,
     alignSelf: 'flex-end',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
     width: '100%',
-    height: '40%',
     position: 'absolute',
-    elevation: 15,
-    zIndex: 15,
     shadowColor: colors.transparent,
+    bottom: sSize.width * 0.02,
   },
   userNameText: {
     fontFamily: textFontFace,
     color: colors.darkBlue,
     fontSize: sSize.width * 0.039,
-    padding: 10,
+    paddingStart: 15,
+    paddingVertical: 5,
   },
   bioText: {
     fontFamily: textFontFaceLight,
     color: colors.darkBlue,
     fontSize: sSize.width * 0.035,
-    width: '80%',
-    textAlign: 'center',
+    textAlign: 'left',
+    paddingStart: 15,
+    paddingVertical: 5,
   },
   postCont: {
     flex: 1,
     borderWidth: 1,
+  },
+
+  rbContainer: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rnWrapper: {},
+  imageButtonCombo: {
+    alignItems: 'center',
+    marginHorizontal: 30,
+  },
+  camText: {
+    fontFamily: textFontFace,
+    color: colors.darkBlue,
+    fontSize: sSize.width * 0.037,
   },
 });
 

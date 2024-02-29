@@ -9,7 +9,8 @@ import { nanoid } from "nanoid";
 import jwt, { decode } from "jsonwebtoken";
 import dotenv from "dotenv";
 import sgMail from "@sendgrid/mail";
-import bcrypt from "bcrypt";
+import multer from "multer";
+import path from "path";
 
 dotenv.config(); // to access .env file
 
@@ -43,7 +44,7 @@ export const signUp = async (req, res) => {
         expiresIn: "7d",
       });
 
-      console.log("signUp users JWT token :", token);
+      // console.log("signUp users JWT token :", token);
 
       const { password, ...rest } = user._doc;
 
@@ -59,9 +60,7 @@ export const signUp = async (req, res) => {
         .json({ error: err, message: resMessages.serverError, status: 0 });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ error: err, message: resMessages.serverError, status: 0 });
+    showServerError(res);
   }
 };
 
@@ -94,10 +93,6 @@ export const signIn = async (req, res) => {
     user.password = undefined;
     user.secret = undefined;
 
-    const resWithTok = user;
-
-    console.log("token appended obj :", resWithTok);
-
     res.status(200).json({
       data: user,
       token,
@@ -106,11 +101,7 @@ export const signIn = async (req, res) => {
     });
   } catch (err) {
     console.log("error occurred in signIn :", err);
-    res.status(500).json({
-      data: {},
-      message: resMessages.serverError,
-      status: 0,
-    });
+    showServerError(res);
   }
 };
 
@@ -139,6 +130,49 @@ export const editUserNameOrBio = async (req, res) => {
 
     console.log("user from decoded token values :", user);
   } catch (err) {
+    showServerError(res);
+  }
+};
+
+export const userImagesUpload = async (req, res) => {
+  console.log("userImagesUpload hit :", req.body);
+  console.log("userImagesUpload file :", req.file);
+
+  try {
+    const authToken = req.headers.authorization;
+
+    const userFromToken = decode(authToken, { json: true });
+    const user = await User.findOne({ _id: userFromToken._id });
+
+    // uploading file in local
+    const storage = multer.diskStorage({
+      destination: "/Users/admin/Desktop/Vignesh/imageBank",
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+        const ext = path.extname(file.originalname);
+        cb(null, uniqueSuffix + ext);
+      },
+    });
+
+    try {
+      const upload = multer({ storage: storage }).single("fileData");
+
+      upload(req, res, async (err) => {
+        console.log("upload values request :", req.file);
+        console.log("user upload data in userImagesUpload :", req.body);
+
+        user.profileImage = req.file.filename;
+        user.save();
+
+        res
+          .status(200)
+          .json({ data: user, message: resMessages.success, status: 1 });
+      });
+    } catch (err) {
+      console.log("multer error :", err);
+    }
+  } catch (err) {
+    console.log("error in userImagesUpload :", err);
     showServerError(res);
   }
 };

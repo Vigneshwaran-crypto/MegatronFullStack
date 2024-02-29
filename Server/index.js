@@ -12,6 +12,20 @@ const app = express();
 app.use(bodyParser.json({ limit: "32mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "32mb", extended: true }));
 
+// accepting image files
+// app.use(
+//   "/Users/admin/Desktop/Vignesh/imageBank",
+//   express.static("/Users/admin/Desktop/Vignesh/imageBank")
+// );
+
+const staticS =
+  "http://172.16.16.31:5000/api/Users/admin/Desktop/Vignesh/imageBank/1709209056472-480040326.jpg";
+
+app.use(
+  "/api/Users/admin/Desktop/Vignesh/imageBank",
+  express.static("/Users/admin/Desktop/Vignesh/imageBank")
+);
+
 //CORS is a security feature implemented by web browsers to prevent cross-origin requests
 app.use(cors());
 

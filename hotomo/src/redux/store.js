@@ -7,6 +7,8 @@ const store = configureStore({
   reducer: {
     main: mainReducer,
   },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({serializableCheck: false}), //to handle formData Req
   //   middleware: middle => middle().concat(logger),
 });
 

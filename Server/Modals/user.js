@@ -26,11 +26,14 @@ const userSchema = new Schema(
     },
     bio: {
       type: String,
-      max: 200,
+      max: 100,
+      default: "Write bio",
     },
-    image: {
-      public_id: Schema.Types.ObjectId,
-      url: Schema.Types.String,
+    profileImage: {
+      type: String,
+    },
+    coverImage: {
+      type: String,
     },
     resetCode: { type: String },
   },

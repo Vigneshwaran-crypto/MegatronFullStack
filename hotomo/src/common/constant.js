@@ -12,6 +12,7 @@ export const staticValues = {
   createUser: 'createUser',
   getAllUsers: 'getAllUsers',
   editUserNameOrBio: 'editUserNameOrBio',
+  userImagesUpload: 'userImagesUpload',
 };
 
 export const HTTP = {
@@ -20,6 +21,7 @@ export const HTTP = {
   CREATE_USER: 'createUser',
   GET_ALL_USERS: 'getAllUsers',
   EDIT_USERNAME_OR_BIO: 'editUserNameOrBio',
+  USER_IMAGES_UPLOAD: 'userImagesUpload',
 
   //headers for api call without authorization
   HEADERS: {

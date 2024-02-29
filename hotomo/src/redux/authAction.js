@@ -46,3 +46,13 @@ export const editUserNameOrBio = jsonData => {
     jsonData,
   };
 };
+
+export const userImagesUpload = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.userImagesUpload,
+    requestUrl: HTTP.USER_IMAGES_UPLOAD,
+    multiPart: true,
+    jsonData,
+  };
+};

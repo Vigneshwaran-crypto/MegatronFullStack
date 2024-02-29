@@ -1,4 +1,6 @@
 import bcrypt, { hash } from "bcrypt";
+import { decode } from "jsonwebtoken";
+import User from "../Modals/user.js";
 
 export const hashPassword = (password) => {
   return new Promise((resolve, reject) => {
@@ -26,6 +28,13 @@ export const showServerError = (res) => {
     message: resMessages.serverError,
     status: 0,
   });
+};
+
+export const getUserFromToken = async (token) => {
+  const userFromToken = decode(token, { json: true });
+  const user = await User.findOne({ _id: userFromToken._id });
+
+  return user;
 };
 
 export const resMessages = {
