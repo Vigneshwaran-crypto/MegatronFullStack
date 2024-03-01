@@ -43,6 +43,6 @@ export const resMessages = {
   reqError: "Request data error",
   success: "Success",
   userNotFound: "User not found",
-  missMatchedPass: "Mismatched password",
+  missMatchedPass: "Wrong Password",
   strongPassword: "Enter strong password",
 };

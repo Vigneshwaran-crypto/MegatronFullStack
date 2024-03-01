@@ -31,9 +31,11 @@ const userSchema = new Schema(
     },
     profileImage: {
       type: String,
+      default: "sampleProfile.jpg",
     },
     coverImage: {
       type: String,
+      default: "sampleCover.jpg",
     },
     resetCode: { type: String },
   },

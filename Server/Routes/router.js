@@ -22,22 +22,22 @@ router.post("/getAllUsers", getAllUsers);
 router.post("/editUserNameOrBio", editUserNameOrBio);
 router.post("/userImagesUpload", userImagesUpload);
 
-const path =
-  "/Users/admin/Desktop/Vignesh/imageBank/1709209056472-480040326.jpg";
+// const path =
+//   "/Users/admin/Desktop/Vignesh/imageBank/1709209056472-480040326.jpg";
 
-if (fs.existsSync(path)) {
-  console.log("File exists");
-} else {
-  console.error("File does not exist");
-}
+// if (fs.existsSync(path)) {
+//   console.log("File exists");
+// } else {
+//   console.error("File does not exist");
+// }
 
-fs.access(path, fs.constants.R_OK, (err) => {
-  if (err) {
-    console.log("error while getting permisson :", err);
-  } else {
-    console.log("File is readable");
-  }
-});
+// fs.access(path, fs.constants.R_OK, (err) => {
+//   if (err) {
+//     console.log("error while getting permisson :", err);
+//   } else {
+//     console.log("File is readable");
+//   }
+// });
 
 // router.post(
 //   "/userImagesUpload",

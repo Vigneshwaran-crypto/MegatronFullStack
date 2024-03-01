@@ -5,6 +5,8 @@ import {navigationRef} from './RootNav';
 import HomeTab from './HomeTab';
 import Login from '../screens/auth/Login';
 import CreateUser from '../screens/auth/CreateUser';
+import {Screen} from 'react-native-screens';
+import CreatePost from '../screens/homeBar/Home/CreatePost';
 
 const Router = () => {
   const Stack = createNativeStackNavigator();
@@ -45,6 +47,15 @@ const Router = () => {
           options={{
             headerShown: false,
             animation: 'simple_push',
+          }}
+        />
+
+        <Stack.Screen
+          name="createPost"
+          component={CreatePost}
+          options={{
+            headerShown: false,
+            animation: 'slide_from_right',
           }}
         />
       </Stack.Navigator>

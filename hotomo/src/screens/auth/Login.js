@@ -1,8 +1,9 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
-  Dimensions,
+  Alert,
+  BackHandler,
   Image,
   StyleSheet,
   Text,
@@ -18,9 +19,15 @@ import {
   textFontFaceMedium,
   textFontFaceSemiBold,
 } from '../../common/styles';
-import {LOG, Toast, globalStyle, sSize} from '../../common/utils';
+import {
+  LOG,
+  Toast,
+  globalExitAlert,
+  globalStyle,
+  sSize,
+} from '../../common/utils';
+import {logIn} from '../../redux/authAction';
 import {apiCallAndStore} from '../../redux/middleware';
-import {getAllUsers, logIn} from '../../redux/authAction';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -32,6 +39,22 @@ const Login = () => {
 
   const [mail, setMail] = useState('');
   const [pass, setPass] = useState('');
+
+  useFocusEffect(
+    useCallback(() => {
+      const backPressed = () => {
+        globalExitAlert();
+        return true;
+      };
+
+      const backAction = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backPressed,
+      );
+
+      return () => backAction.remove();
+    }, []),
+  );
 
   useEffect(() => {
     LOG('userDetails in LOGIN :', user);
@@ -55,7 +78,7 @@ const Login = () => {
       Toast('Please enter password');
     } else {
       const req = {
-        email: mail,
+        email: mail.toLocaleLowerCase(),
         password: pass,
       };
 

@@ -9,21 +9,21 @@ import {
   View,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {colors} from '../../common/colors';
-import {LOG, sSize} from '../../common/utils';
+import {colors} from '../../../common/colors';
+import {LOG, sSize} from '../../../common/utils';
 import {
   textFontFace,
   textFontFaceLight,
   textFontFaceMedium,
-} from '../../common/styles';
+} from '../../../common/styles';
 import {useDispatch, useSelector} from 'react-redux';
-import {apiCallAndStore} from '../../redux/middleware';
-import {editUserNameOrBio, userImagesUpload} from '../../redux/authAction';
+import {apiCallAndStore} from '../../../redux/middleware';
+import {editUserNameOrBio, userImagesUpload} from '../../../redux/authAction';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import {serverUrl} from '../../common/constant';
+import {serverUrl} from '../../../common/constant';
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -36,13 +36,16 @@ const Profile = () => {
 
   const imageEditRB = useRef();
 
-  const imageUri = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${userDetails.profileImage}`;
+  const isProfOrCover = useRef(0);
+
+  const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${userDetails.profileImage}`;
+  const coverImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${userDetails.coverImage}`;
 
   const staticS =
     'http://172.16.16.31:5000/api/Users/admin/Desktop/Vignesh/imageBank/1709209056472-480040326.jpg';
 
   useEffect(() => {
-    LOG('image uri sample :', imageUri);
+    LOG('image uri sample :', profileImageUrl);
 
     LOG('userDeTails in profile :', userDetails);
     if (Object.keys(userDetails).length !== 0) {
@@ -77,6 +80,10 @@ const Profile = () => {
 
   const onEditImagePress = to => {
     imageEditRB.current.open();
+
+    isProfOrCover.current = to;
+
+    console.log('clikced for', +to);
   };
 
   const onImagePress = async is => {
@@ -113,9 +120,14 @@ const Profile = () => {
 
     const uploadForm = new FormData();
 
-    uploadForm.append('fileData', imgJson);
+    if (isProfOrCover.current === 1) {
+      uploadForm.append('fileData', imgJson);
+    } else {
+      uploadForm.append('coverData', imgJson);
+    }
 
     dispatch(apiCallAndStore(userImagesUpload(uploadForm)));
+
     imageEditRB.current.close();
   };
 
@@ -123,23 +135,24 @@ const Profile = () => {
     <View style={styles.container}>
       <View style={styles.profileCont}>
         <View style={styles.coverImageCont}>
-          <TouchableOpacity onPress={onEditImagePress}>
+          <TouchableOpacity onPress={onEditImagePress.bind(this, 0)}>
             <Image
-              source={require('../../../assets/Images/catCover.jpg')}
+              // source={require('../../../assets/Images/catCover.jpg')}
+              source={{uri: coverImageUrl}}
               resizeMode="cover"
               style={styles.coverImage}
             />
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={onEditImagePress}
+            onPress={onEditImagePress.bind(this, 1)}
             style={[
               styles.profileImageView,
               {display: isKeyboard ? 'none' : 'flex'},
             ]}>
             <Image
               // source={require('../../../assets/appIcons/profileImg.jpg')}
-              source={{uri: imageUri}}
+              source={{uri: profileImageUrl}}
               style={styles.profileImage}
             />
           </TouchableOpacity>
@@ -158,7 +171,11 @@ const Profile = () => {
             <Text style={styles.followerText}>Followers</Text>
           </View>
 
-          <View style={styles.followersView}>
+          <View
+            style={[
+              styles.followersView,
+              {display: isKeyboard ? 'none' : 'flex'},
+            ]}>
             <Text style={styles.countText}>10</Text>
             <Text style={styles.followerText}>Following</Text>
           </View>
@@ -166,15 +183,17 @@ const Profile = () => {
           <View style={styles.userCont}>
             <TextInput
               style={styles.userNameText}
-              maxLength={30}
+              maxLength={25}
               onChangeText={setName}
               value={name}
               onSubmitEditing={onBioUserNameSubmit}
+              numberOfLines={1}
+              multiline={false}
             />
             <TextInput
               style={styles.bioText}
               placeholder="Write bio"
-              maxLength={45}
+              maxLength={35}
               onChangeText={setBio}
               value={bio}
               onSubmitEditing={onBioUserNameSubmit}
@@ -275,9 +294,7 @@ const styles = StyleSheet.create({
   },
   userCont: {
     flex: 1,
-    borderColor: colors.red,
     alignSelf: 'flex-end',
-    width: '100%',
     position: 'absolute',
     shadowColor: colors.transparent,
     bottom: sSize.width * 0.02,
@@ -288,6 +305,8 @@ const styles = StyleSheet.create({
     fontSize: sSize.width * 0.039,
     paddingStart: 15,
     paddingVertical: 5,
+    textAlign: 'left',
+    alignSelf: 'flex-start',
   },
   bioText: {
     fontFamily: textFontFaceLight,

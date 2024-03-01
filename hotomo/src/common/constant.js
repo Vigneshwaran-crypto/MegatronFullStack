@@ -37,7 +37,13 @@ export const HTTP = {
 
   formDataHeader: {
     'Content-Type': 'multipart/form-data',
-    Accept: '*/*',
+    Accept: 'application/json',
     Authorization: AuthToken,
   },
+
+  // formDataHeader: {
+  //   'Content-Type': 'multipart/form-data',
+  //   Accept: '*/*',
+  //   Authorization: AuthToken,
+  // },
 };

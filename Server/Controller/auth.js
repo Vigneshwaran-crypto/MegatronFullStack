@@ -11,6 +11,7 @@ import dotenv from "dotenv";
 import sgMail from "@sendgrid/mail";
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 
 dotenv.config(); // to access .env file
 
@@ -157,19 +158,52 @@ export const userImagesUpload = async (req, res) => {
     try {
       const upload = multer({ storage: storage }).single("fileData");
 
+      const coverUpload = multer({ storage: storage }).single("coverData");
+
+      //for profile image upload
       upload(req, res, async (err) => {
-        console.log("upload values request :", req.file);
-        console.log("user upload data in userImagesUpload :", req.body);
+        console.log("profile Image upload req :", req.file);
+        //Removing previous image
+        if (Object.keys(req.file ? req.file : {}).length !== 0) {
+          const prevImage = user.profileImage;
+          if (prevImage !== "sampleProfile.jpg") {
+            fs.rmSync("/Users/admin/Desktop/Vignesh/imageBank/" + prevImage, {
+              force: true,
+            });
+          }
 
-        user.profileImage = req.file.filename;
-        user.save();
+          user.profileImage = req.file.filename;
+          user.save();
 
-        res
-          .status(200)
-          .json({ data: user, message: resMessages.success, status: 1 });
+          res
+            .status(200)
+            .json({ data: user, message: resMessages.success, status: 1 });
+        }
+      });
+
+      coverUpload(req, res, async (err) => {
+        console.log("cover image upload req:", req.file);
+
+        if (Object.keys(req.file ? req.file : {}).length !== 0) {
+          const prevCoverImage = user.coverImage;
+          if (prevCoverImage !== "sampleCover.jpg") {
+            fs.rmSync(
+              "/Users/admin/Desktop/Vignesh/imageBank/" + prevCoverImage,
+              { force: true }
+            );
+          }
+
+          user.coverImage = req.file.filename;
+          user.save();
+
+          res
+            .status(200)
+            .json({ data: user, message: resMessages.success, status: 1 });
+        }
       });
     } catch (err) {
       console.log("multer error :", err);
+      showServerError(res);
     }
   } catch (err) {
     console.log("error in userImagesUpload :", err);

@@ -1,5 +1,13 @@
-import {Alert, Dimensions, Platform, ToastAndroid} from 'react-native';
+import {
+  Alert,
+  BackHandler,
+  Dimensions,
+  Platform,
+  ToastAndroid,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as RootNav from '../router/RootNav.js';
+import appJson from '../../app.json';
 
 const {height, width} = Dimensions.get('window');
 
@@ -76,4 +84,20 @@ export const globalStyle = {
     right: 0,
     bottom: sSize.height * 0.07,
   },
+};
+
+export const onBackPressGlobal = () => {
+  RootNav.navigationRef.goBack();
+};
+
+export const globalExitAlert = () => {
+  Alert.alert(appJson.displayName, 'Are you sure want to exit ?', [
+    {
+      text: 'Cancel',
+    },
+    {
+      text: 'OK',
+      onPress: () => BackHandler.exitApp(),
+    },
+  ]);
 };

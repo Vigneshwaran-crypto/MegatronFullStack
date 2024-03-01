@@ -1,5 +1,5 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {BackHandler, StyleSheet, View} from 'react-native';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import Feather from 'react-native-vector-icons/Feather';
@@ -7,13 +7,17 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import Octicons from 'react-native-vector-icons/Octicons';
 
 // Tab Screens
-import Home from '../screens/homeBar/Home';
-import Chat from '../screens/homeBar/Chat';
-import Profile from '../screens/homeBar/Profile';
+import Home from '../screens/homeBar/Home/Home';
+import Chat from '../screens/homeBar/Chat/Chat';
+import Profile from '../screens/homeBar/Profile/Profile';
 import {colors} from '../common/colors';
 import {sSize} from '../common/utils';
+import {useDispatch} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 
 const HomeTab = () => {
+  const dispatch = useDispatch();
+  const nav = useNavigation();
   const Tab = createBottomTabNavigator();
 
   const tabIconSize = sSize.width * 0.06;

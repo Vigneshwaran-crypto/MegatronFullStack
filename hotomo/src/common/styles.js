@@ -5,6 +5,7 @@ export const textFontFace = 'Mona-Sans-Regular';
 export const textFontFaceMedium = 'Mona-Sans-Medium';
 export const textFontFaceSemiBold = 'Mona-Sans-SemiBold';
 export const textFontFaceLight = 'Mona-Sans-Light';
+export const textFontFaceStyle = 'Caveat-Regular';
 
 export const fontsSize = {
   size18: 18,
