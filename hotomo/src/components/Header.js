@@ -7,7 +7,7 @@ import {colors} from '../common/colors';
 import {useSelector} from 'react-redux';
 import {serverUrl} from '../common/constant';
 
-const Header = () => {
+const Header = ({title, profile}) => {
   const userDetails = useSelector(({main}) => main.userDetails);
   const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${userDetails.profileImage}`;
 
@@ -22,10 +22,13 @@ const Header = () => {
           />
         </TouchableOpacity>
 
-        <Text style={styles.titleText}>Create Post</Text>
+        <Text style={styles.titleText}>{title}</Text>
       </View>
 
-      <Image source={{uri: profileImageUrl}} style={styles.profImage} />
+      <Image
+        source={{uri: profileImageUrl}}
+        style={[styles.profImage, {display: profile ? 'flex' : 'none'}]}
+      />
     </View>
   );
 };

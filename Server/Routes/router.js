@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  createPost,
   editUserNameOrBio,
   getAllUsers,
   logIn,
@@ -21,6 +22,7 @@ router.post("/createUser", signUp);
 router.post("/getAllUsers", getAllUsers);
 router.post("/editUserNameOrBio", editUserNameOrBio);
 router.post("/userImagesUpload", userImagesUpload);
+router.post("/createPost", createPost);
 
 // const path =
 //   "/Users/admin/Desktop/Vignesh/imageBank/1709209056472-480040326.jpg";

@@ -8,6 +8,7 @@ import {
 } from '../common/constant';
 import {LOG, Toast, storeItem} from '../common/utils';
 import * as RootNav from '../router/RootNav';
+import {StackActions} from '@react-navigation/native';
 
 const axios = require('axios').default;
 
@@ -94,6 +95,17 @@ export const apiCallAndStore = createAsyncThunk(
             LOG('userImagesUpload_in_middleware :', apiResData);
             if (apiResData.status === 1) {
               goNext = true;
+            }
+            break;
+
+          case staticValues.createPost:
+            LOG('createPost_in_middleware :', apiResData);
+            if (apiResData.status === 1) {
+              goNext = true;
+              Toast('Posted Successfully');
+              RootNav.navigationRef.dispatch(StackActions.pop(2)); //navigating two screen back
+            } else {
+              Toast('Please try again');
             }
             break;
 

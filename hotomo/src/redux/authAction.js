@@ -56,3 +56,13 @@ export const userImagesUpload = jsonData => {
     jsonData,
   };
 };
+
+export const createPost = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.createPost,
+    requestUrl: HTTP.CREATE_POST,
+    multiPart: true,
+    jsonData,
+  };
+};

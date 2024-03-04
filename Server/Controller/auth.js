@@ -12,6 +12,7 @@ import sgMail from "@sendgrid/mail";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import post from "../Modals/post.js";
 
 dotenv.config(); // to access .env file
 
@@ -207,6 +208,54 @@ export const userImagesUpload = async (req, res) => {
     }
   } catch (err) {
     console.log("error in userImagesUpload :", err);
+    showServerError(res);
+  }
+};
+
+export const createPost = async (req, res) => {
+  console.log("createPost api hit :", req.body);
+
+  try {
+    const authToken = req.headers.authorization;
+
+    const userFromToken = decode(authToken, { json: true });
+    const user = await User.findOne({ _id: userFromToken._id });
+
+    console.log("createPost user :", user);
+
+    // Upload file local using multer
+    const storage = multer.diskStorage({
+      destination: "/Users/admin/Desktop/Vignesh/imageBank",
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+        const ext = path.extname(file.originalname);
+        cb(null, uniqueSuffix + ext);
+      },
+    });
+
+    try {
+      const postHandler = multer({ storage: storage }).single("postData");
+
+      postHandler(req, res, async () => {
+        console.log("postHandler :", req.file);
+        console.log("postHandler request :", req.body.bio);
+
+        const newPost = await new post({
+          caption: req.body.bio,
+          userId: user._id,
+          image: req.file.filename,
+        }).save();
+
+        return res
+          .status(200)
+          .json({ data: newPost, message: resMessages.success, status: 1 });
+      });
+    } catch (err) {
+      console.log("createPost multer catch :", err);
+      showServerError(res);
+    }
+  } catch (err) {
+    console.log("error in createPost :", err);
     showServerError(res);
   }
 };

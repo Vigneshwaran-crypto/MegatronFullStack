@@ -18,7 +18,17 @@ const ActionBar = () => {
     if (to === 0) {
     } else if (to === 1) {
       //createPost Press
-      nav.navigate('createPost');
+      // nav.navigate('postGallery');
+
+      nav.reset({
+        index: 1,
+        routes: [{name: 'homeTab'}, {name: 'postGallery'}],
+      });
+
+      //       navigation.reset({
+      //         index: 0,
+      //         routes: [{name: 'signIn'}],
+      //       });
     } else {
       //notify Press
     }

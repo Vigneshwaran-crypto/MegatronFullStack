@@ -18,6 +18,10 @@ const Application = () => {
       PermissionsAndroid.requestMultiple([
         'android.permission.READ_EXTERNAL_STORAGE',
         'android.permission.WRITE_EXTERNAL_STORAGE',
+        'android.permission.CAMERA',
+        'android.permission.READ_MEDIA_IMAGES',
+        'android.permission.READ_MEDIA_VIDEO',
+        'android.permission.RECORD_AUDIO',
       ])
         .then(res => {
           LOG('getting userPermission in application : ', res);
