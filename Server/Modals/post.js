@@ -7,6 +7,10 @@ const post = new Schema(
     userId: {
       type: String,
     },
+    userName: {
+      type: String,
+      required: true,
+    },
     image: {
       type: String,
       required: true,

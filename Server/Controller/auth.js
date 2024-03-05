@@ -258,6 +258,7 @@ export const createPost = async (req, res) => {
 
         const newPost = await new post({
           caption: req.body.bio,
+          userName: user.userName,
           userId: user._id,
           image: req.file.filename,
         }).save();
@@ -352,13 +353,11 @@ export const likePost = async (req, res) => {
           console.log("already liked delete failed");
         });
 
-      return res
-        .status(200)
-        .json({
-          data: { postId, reactionType: "0" },
-          message: resMessages.success,
-          status: 1,
-        });
+      return res.status(200).json({
+        data: { postId, reactionType: "0" },
+        message: resMessages.success,
+        status: 1,
+      });
     }
 
     const likePost = await new postLikedList({

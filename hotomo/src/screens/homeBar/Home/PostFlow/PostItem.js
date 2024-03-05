@@ -53,7 +53,7 @@ const PostItem = ({item, index}) => {
         </View>
 
         <View style={styles.profileNameView}>
-          <Text style={styles.userNameText}>Sowmia</Text>
+          <Text style={styles.userNameText}>{item.userName}</Text>
           <Text style={styles.postedDateText}>
             {moment(item.createdAt).calendar()}
           </Text>
