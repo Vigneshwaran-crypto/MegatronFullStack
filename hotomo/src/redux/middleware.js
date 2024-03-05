@@ -79,6 +79,7 @@ export const apiCallAndStore = createAsyncThunk(
 
               dispatch(apiCallAndStore(getAllPost({})));
             } else {
+              RootNav.navigate('logIn');
               Toast(apiResData.message);
             }
             break;

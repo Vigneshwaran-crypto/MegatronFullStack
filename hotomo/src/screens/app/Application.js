@@ -39,17 +39,19 @@ const Application = () => {
       .then(res => {
         LOG('token from local store :', res);
 
-        const req = {
-          userToken: res,
-        };
+        if (res) {
+          const req = {
+            userToken: res,
+          };
 
-        dispatch(apiCallAndStore(logIn(req)));
+          dispatch(apiCallAndStore(logIn(req)));
+        } else {
+          moveToLog();
+        }
       })
       .catch(err => {
         LOG('error while getting token from local :', err);
       });
-
-    // moveToLog();
   }, []);
 
   const moveToLog = () => {
