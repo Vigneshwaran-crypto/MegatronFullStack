@@ -23,9 +23,13 @@ const post = new Schema(
       type: String,
       default: "",
     },
-    share: {
+    shares: {
       type: String,
       default: "",
+    },
+    youLiked: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

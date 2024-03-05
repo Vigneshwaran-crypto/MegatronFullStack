@@ -20,6 +20,7 @@
     "axios": "^1.6.7",
     "lottie-ios": "^3.2.3",
     "lottie-react-native": "^6.7.0-rc1",
+    "moment": "^2.30.1",
     "react": "18.2.0",
     "react-native": "0.73.3",
     "react-native-image-crop-picker": "^0.40.3",

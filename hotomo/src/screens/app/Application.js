@@ -6,12 +6,16 @@ import {useNavigation} from '@react-navigation/native';
 import {PermissionsAndroid} from 'react-native';
 import {colors} from '../../common/colors';
 import AnimatedLottieView from 'lottie-react-native';
-import {LOG} from '../../common/utils';
+import {LOG, getItem} from '../../common/utils';
+import {logIn} from '../../redux/authAction';
+import {apiCallAndStore} from '../../redux/middleware';
+import {useDispatch} from 'react-redux';
 
 const win = Dimensions.get('window');
 
 const Application = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (Platform.OS === 'android') {
@@ -31,7 +35,21 @@ const Application = () => {
         });
     }
 
-    moveToLog();
+    getItem('token')
+      .then(res => {
+        LOG('token from local store :', res);
+
+        const req = {
+          userToken: res,
+        };
+
+        dispatch(apiCallAndStore(logIn(req)));
+      })
+      .catch(err => {
+        LOG('error while getting token from local :', err);
+      });
+
+    // moveToLog();
   }, []);
 
   const moveToLog = () => {

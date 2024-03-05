@@ -41,4 +41,5 @@ export const colors = {
   thinBlack: '#2B2937',
   darkGrey: '#67696A',
   halfTrans: 'rgba(128, 128, 128, 0.2)',
+  likeRed: '#e4211b',
 };

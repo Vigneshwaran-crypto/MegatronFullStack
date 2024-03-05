@@ -1,6 +1,7 @@
 import User from "../Modals/user.js";
 import {
   comparedPassword,
+  getUserFromToken,
   hashPassword,
   resMessages,
   showServerError,
@@ -13,6 +14,8 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import post from "../Modals/post.js";
+import postLikedList from "../Modals/postLikedList.js";
+import mongoose from "mongoose";
 
 dotenv.config(); // to access .env file
 
@@ -69,10 +72,23 @@ export const signUp = async (req, res) => {
 export const signIn = async (req, res) => {
   console.log("signIn api hit", req.body);
   try {
-    const { email, password } = req.body;
+    const { email, password, userToken } = req.body;
     const user = await User.findOne({ email }); //is user in DB
 
     console.log("user from db in signIn :", user);
+
+    if (userToken) {
+      const user = await getUserFromToken(userToken);
+
+      console.log("user retried from getUserFromToken func :", user);
+
+      return res.status(200).json({
+        data: user,
+        token: userToken,
+        message: resMessages.success,
+        status: 1,
+      });
+    }
 
     if (!user) {
       return res
@@ -270,11 +286,97 @@ export const getAllUsers = async (req, res) => {
       .status(200)
       .json({ data: users, message: resMessages.success, status: 1 });
   } catch (err) {
-    res.status(500).json({
-      data: {},
-      message: resMessages.serverError,
-      status: 0,
+    showServerError(res);
+  }
+};
+
+export const getAllPosts = async (req, res) => {
+  console.log("getAllPosts api hit :", req.body);
+  try {
+    const posts = await post.find({});
+    const likedList = await postLikedList.find({});
+
+    const modifiedList = posts.map((pos) => {
+      const isHas = likedList.find((liked) => {
+        return pos._id.toString() === liked.postId;
+      });
+
+      console.log("checking condition :", isHas); // it work's but log showing undefined
+
+      if (isHas) {
+        pos.youLiked = true;
+      }
+
+      return pos;
     });
+
+    console.log("updated postList with likes :", modifiedList);
+
+    res.status(200).json({
+      data: modifiedList,
+      message: resMessages.success,
+      status: 1,
+    });
+  } catch (err) {
+    console.log("getAllPosts api error :", err);
+    showServerError(res);
+  }
+};
+
+export const likePost = async (req, res) => {
+  console.log("likePost api hit :", req.body);
+
+  try {
+    const authToken = req.headers.authorization;
+    const user = await getUserFromToken(authToken);
+
+    const { postId, reactionType } = req.body;
+
+    const reactedPost = await post.find({ _id: postId });
+    console.log("reacted post in likePost :", reactedPost);
+
+    const isExistPost = await postLikedList.findOne({
+      postId: postId,
+      userId: user._id,
+    });
+
+    console.log("isExistPost from db :", isExistPost);
+
+    if (isExistPost) {
+      await postLikedList
+        .deleteOne({ _id: isExistPost._id })
+        .then((res) => {
+          console.log("already liked deleted successfully");
+        })
+        .catch((err) => {
+          console.log("already liked delete failed");
+        });
+
+      return res
+        .status(200)
+        .json({
+          data: { postId, reactionType: "0" },
+          message: resMessages.success,
+          status: 1,
+        });
+    }
+
+    const likePost = await new postLikedList({
+      postId: postId,
+      userId: user._id,
+      reactionType: reactionType,
+      userImage: user.profileImage,
+      userName: user.userName,
+    }).save();
+
+    console.log("user liked data after save:", likePost);
+
+    res
+      .status(200)
+      .json({ data: req.body, message: resMessages.success, status: 1 });
+  } catch (err) {
+    console.log("likePost api error :", err);
+    showServerError(res);
   }
 };
 

@@ -66,3 +66,21 @@ export const createPost = jsonData => {
     jsonData,
   };
 };
+
+export const getAllPost = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.getAllPosts,
+    requestUrl: HTTP.GET_ALL_POSTS,
+    jsonData,
+  };
+};
+
+export const likePostAct = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.likePost,
+    requestUrl: HTTP.LIKE_POST,
+    jsonData,
+  };
+};

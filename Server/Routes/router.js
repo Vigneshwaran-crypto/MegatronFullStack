@@ -2,7 +2,9 @@ import express from "express";
 import {
   createPost,
   editUserNameOrBio,
+  getAllPosts,
   getAllUsers,
+  likePost,
   logIn,
   signIn,
   signUp,
@@ -23,31 +25,7 @@ router.post("/getAllUsers", getAllUsers);
 router.post("/editUserNameOrBio", editUserNameOrBio);
 router.post("/userImagesUpload", userImagesUpload);
 router.post("/createPost", createPost);
-
-// const path =
-//   "/Users/admin/Desktop/Vignesh/imageBank/1709209056472-480040326.jpg";
-
-// if (fs.existsSync(path)) {
-//   console.log("File exists");
-// } else {
-//   console.error("File does not exist");
-// }
-
-// fs.access(path, fs.constants.R_OK, (err) => {
-//   if (err) {
-//     console.log("error while getting permisson :", err);
-//   } else {
-//     console.log("File is readable");
-//   }
-// });
-
-// router.post(
-//   "/userImagesUpload",
-//   upload.single("fileData"),
-//   (req, res, next) => {
-//     console.log("userImagesUpload hit :", req.file);
-//     console.log("userImagesUpload body :", req.body);
-//   }
-// );
+router.post("/getAllPosts", getAllPosts);
+router.post("/likePost", likePost);
 
 export default router;

@@ -9,6 +9,7 @@ import {
 import {LOG, Toast, storeItem} from '../common/utils';
 import * as RootNav from '../router/RootNav';
 import {StackActions} from '@react-navigation/native';
+import {getAllPost} from './authAction';
 
 const axios = require('axios').default;
 
@@ -75,6 +76,8 @@ export const apiCallAndStore = createAsyncThunk(
               storeItem('token', token);
 
               RootNav.navigate('homeTab');
+
+              dispatch(apiCallAndStore(getAllPost({})));
             } else {
               Toast(apiResData.message);
             }
@@ -109,6 +112,20 @@ export const apiCallAndStore = createAsyncThunk(
             }
             break;
 
+          case staticValues.getAllPosts:
+            LOG('getAllPosts_in_middleware :', apiResData);
+            if (apiResData.status === 1) {
+              goNext = true;
+            }
+            break;
+
+          case staticValues.likePost:
+            LOG('likePost_in_middleware :', apiResData);
+            if (apiResData.status === 1) {
+              goNext = true;
+            }
+            break;
+
           default:
             goNext = true;
             break;
@@ -135,7 +152,7 @@ export const apiCallAndStore = createAsyncThunk(
 
 const initialState = {
   loading: false,
-  posts: [],
+  allPosts: [],
   userDetails: {},
 };
 
@@ -168,6 +185,32 @@ const mainSlice = createSlice({
           case staticValues.userImagesUpload:
             LOG('userImagesUpload_in_Reducer :', payload);
             state.userDetails = payload.jsonData;
+            break;
+
+          case staticValues.getAllPosts:
+            LOG('getAllPosts_in_Reducer :', payload);
+            state.allPosts = payload.jsonData;
+            break;
+
+          case staticValues.likePost:
+            LOG('likePost_in_Reducer :', payload);
+
+            const likedData = payload.jsonData;
+
+            const postList = state.allPosts;
+
+            const changedList = postList.map(post => {
+              if (post._id === likedData.postId) {
+                post.youLiked = likedData.reactionType === '1' ? true : false;
+              }
+
+              return post;
+            });
+
+            LOG('our changed liked list :', changedList);
+
+            state.allPosts = changedList;
+
             break;
         }
       }

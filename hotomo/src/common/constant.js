@@ -7,23 +7,25 @@ export const AuthToken = '';
 
 export const staticValues = {
   apiTest: 'apiTest',
-  getAllPost: 'getAllPost',
   logIn: 'logIn',
   createUser: 'createUser',
   getAllUsers: 'getAllUsers',
   editUserNameOrBio: 'editUserNameOrBio',
   userImagesUpload: 'userImagesUpload',
   createPost: 'createPost',
+  getAllPosts: 'getAllPosts',
+  likePost: 'likePost',
 };
 
 export const HTTP = {
-  GET_ALL_PRODUCTS: 'https://fakestoreapi.com/products',
   LOG_IN_URL: 'login',
   CREATE_USER: 'createUser',
   GET_ALL_USERS: 'getAllUsers',
   EDIT_USERNAME_OR_BIO: 'editUserNameOrBio',
   USER_IMAGES_UPLOAD: 'userImagesUpload',
   CREATE_POST: 'createPost',
+  GET_ALL_POSTS: 'getAllPosts',
+  LIKE_POST: 'likePost',
 
   //headers for api call without authorization
   HEADERS: {
