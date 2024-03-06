@@ -15,7 +15,7 @@ import {apiCallAndStore} from '../../../../redux/middleware';
 import {likePostAct} from '../../../../redux/authAction';
 import moment from 'moment';
 
-const PostItem = ({item, index}) => {
+const PostItem = ({item, index, onCommentPress}) => {
   const dispatch = useDispatch();
   const userDetails = useSelector(({main}) => main.userDetails);
 
@@ -28,9 +28,9 @@ const PostItem = ({item, index}) => {
 
   const shortCap = caption.length > 10 ? caption.slice(0, 10) + '...' : caption;
 
-  useEffect(() => {
-    LOG('PostItem comp data : ', item);
-  }, []);
+  // useEffect(() => {
+  //   LOG('PostItem comp data : ', item);
+  // }, []);
 
   const likePost = () => {
     const req = {
@@ -103,7 +103,9 @@ const PostItem = ({item, index}) => {
               style={{color: item.youLiked ? colors.likeRed : colors.darkBlue}}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButtons}>
+          <TouchableOpacity
+            style={styles.actionButtons}
+            onPress={() => onCommentPress(item)}>
             <AntDesign
               size={sSize.width * 0.055}
               color={colors.black}

@@ -8,6 +8,10 @@ const postsComments = new Schema(
       type: String,
       require: true,
     },
+    userId: {
+      type: String,
+      require: true,
+    },
     comment: {
       type: String,
       require: true,

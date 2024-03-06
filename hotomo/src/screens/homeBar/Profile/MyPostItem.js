@@ -5,7 +5,6 @@ import {colors} from '../../../common/colors';
 
 const MyPostItem = ({item, index}) => {
   const postImageUri = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${item.image}`;
-
   return (
     <TouchableOpacity style={styles.container} key={index}>
       <Image source={{uri: postImageUri}} style={styles.postImage} />
