@@ -260,6 +260,7 @@ export const createPost = async (req, res) => {
           caption: req.body.bio,
           userName: user.userName,
           userId: user._id,
+          userImage: user.profileImage,
           image: req.file.filename,
         }).save();
 
@@ -294,17 +295,25 @@ export const getAllUsers = async (req, res) => {
 export const getAllPosts = async (req, res) => {
   console.log("getAllPosts api hit :", req.body);
   try {
+    const authToken = req.headers.authorization;
+
+    const user = await getUserFromToken(authToken);
+
+    // pos._id.toString()
+
     const posts = await post.find({});
     const likedList = await postLikedList.find({});
 
     const modifiedList = posts.map((pos) => {
       const isHas = likedList.find((liked) => {
-        return pos._id.toString() === liked.postId;
+        console.log("liked list inside loop :", liked);
+
+        return user._id.toString() === liked.userId;
       });
 
-      console.log("checking condition :", isHas); // it work's but log showing undefined
+      console.log("checking condition :" + isHas); // it work's but log showing undefined
 
-      if (isHas) {
+      if (isHas && isHas.postId === pos._id.toString()) {
         pos.youLiked = true;
       }
 
@@ -336,16 +345,18 @@ export const likePost = async (req, res) => {
     const reactedPost = await post.find({ _id: postId });
     console.log("reacted post in likePost :", reactedPost);
 
-    const isExistPost = await postLikedList.findOne({
+    const isExistPost = await postLikedList.find({
       postId: postId,
       userId: user._id,
     });
 
+    // await postLikedList.
+
     console.log("isExistPost from db :", isExistPost);
 
-    if (isExistPost) {
+    if (isExistPost.length !== 0) {
       await postLikedList
-        .deleteOne({ _id: isExistPost._id })
+        .deleteOne({ _id: isExistPost[0]._id })
         .then((res) => {
           console.log("already liked deleted successfully");
         })

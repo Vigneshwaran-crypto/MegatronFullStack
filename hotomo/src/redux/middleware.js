@@ -193,6 +193,11 @@ const mainSlice = createSlice({
             state.allPosts = payload.jsonData;
             break;
 
+          case staticValues.createPost:
+            LOG('createPost_in_Reducer :', payload);
+            state.allPosts.push(payload.jsonData);
+            break;
+
           case staticValues.likePost:
             LOG('likePost_in_Reducer :', payload);
 

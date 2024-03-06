@@ -11,6 +11,10 @@ const post = new Schema(
       type: String,
       required: true,
     },
+    userImage: {
+      type: String,
+      required: true,
+    },
     image: {
       type: String,
       required: true,

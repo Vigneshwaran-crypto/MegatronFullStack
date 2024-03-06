@@ -13,6 +13,8 @@ import {textFontFace, textFontFaceLight} from '../../../../common/styles';
 import {LOG, sSize} from '../../../../common/utils';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
 import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch} from 'react-redux';
 import {apiCallAndStore} from '../../../../redux/middleware';
@@ -85,10 +87,10 @@ const CreatePost = props => {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.listButtonItem}>
-            <Ionicons
+            <AntDesign
               size={23}
               color={colors.mediumBlue}
-              name={'location-outline'}
+              name={'paperclip'}
               style={{paddingHorizontal: 5}}
             />
             <Text style={styles.itemButtontext}>Tag people</Text>
@@ -104,7 +106,7 @@ const CreatePost = props => {
             <Ionicons
               size={23}
               color={colors.mediumBlue}
-              name={'location-outline'}
+              name={'people-outline'}
               style={{paddingHorizontal: 5}}
             />
             <Text style={styles.itemButtontext}>Audience</Text>

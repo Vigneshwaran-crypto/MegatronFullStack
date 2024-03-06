@@ -20,7 +20,7 @@ const PostItem = ({item, index}) => {
   const userDetails = useSelector(({main}) => main.userDetails);
 
   const postImageUri = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${item.image}`;
-  const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${userDetails.profileImage}`;
+  const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${item.userImage}`;
 
   const [showFull, setShowFull] = useState(false);
 
@@ -75,7 +75,7 @@ const PostItem = ({item, index}) => {
         <Image
           source={{uri: postImageUri}}
           resizeMode="cover"
-          resizeMethod="scale"
+          resizeMethod="resize"
           style={styles.postImage}
           blurRadius={showFull ? 5 : 0}
         />
@@ -128,6 +128,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginVertical: 5,
     padding: 10,
+    backgroundColor: colors.white,
+    borderRadius: 8,
   },
   profileView: {
     flexDirection: 'row',
@@ -159,16 +161,15 @@ const styles = StyleSheet.create({
   },
   postImageCont: {
     marginVertical: 10,
-    height: sSize.width * 0.95,
+    // height: sSize.width * 0.95,
     width: '100%',
     borderRadius: 10,
   },
   postImage: {
-    resizeMode: 'cover',
-    borderRadius: 10,
-    height: sSize.width * 0.95,
-    width: '100%',
-    overflow: 'hidden',
+    width: undefined,
+    height: undefined,
+    aspectRatio: 1,
+    flex: 1,
   },
   postReactionView: {
     flex: 1,
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
     height: sSize.width * 0.1,
   },
   lastReactedProfiles: {
-    borderWidth: 1,
+    // borderWidth: 1,
     flex: 1.5,
   },
   likeCmdShareView: {

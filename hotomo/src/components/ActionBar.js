@@ -49,7 +49,7 @@ const ActionBar = () => {
         <TouchableOpacity onPress={onOptionsPress.bind(this, 1)}>
           <AntDesign
             name="pluscircleo"
-            color={colors.darkBlue}
+            color={colors.mediumBlue}
             size={sSize.width * 0.062}
           />
         </TouchableOpacity>
@@ -57,7 +57,7 @@ const ActionBar = () => {
         <TouchableOpacity onPress={onOptionsPress.bind(this, 2)}>
           <AntDesign
             name="hearto"
-            color={colors.darkBlue}
+            color={colors.mediumBlue}
             size={sSize.width * 0.06}
           />
         </TouchableOpacity>

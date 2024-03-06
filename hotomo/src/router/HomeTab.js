@@ -87,11 +87,13 @@ const HomeTab = () => {
 
 const styles = StyleSheet.create({
   tabBarContainer: {
-    elevation: 0,
-    zIndex: 0,
+    elevation: 10,
+    zIndex: 10,
     height: sSize.width * 0.14,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: colors.mediumBlue,
+    backgroundColor: colors.white,
   },
   tabBarIconContainer: focused => ({
     alignItems: 'center',
