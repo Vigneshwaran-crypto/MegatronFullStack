@@ -1,4 +1,5 @@
 import {
+  FlatList,
   Image,
   Keyboard,
   StyleSheet,
@@ -18,16 +19,23 @@ import {
 } from '../../../common/styles';
 import {useDispatch, useSelector} from 'react-redux';
 import {apiCallAndStore} from '../../../redux/middleware';
-import {editUserNameOrBio, userImagesUpload} from '../../../redux/authAction';
+import {
+  editUserNameOrBio,
+  getAllUsers,
+  getUserPosts,
+  userImagesUpload,
+} from '../../../redux/authAction';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import {serverUrl} from '../../../common/constant';
+import MyPostItem from './MyPostItem';
 
 const Profile = () => {
   const dispatch = useDispatch();
   const userDetails = useSelector(({main}) => main.userDetails);
+  const myPosts = useSelector(({main}) => main.userPosts);
 
   const [bio, setBio] = useState('');
   const [name, setName] = useState('');
@@ -41,8 +49,9 @@ const Profile = () => {
   const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${userDetails.profileImage}`;
   const coverImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${userDetails.coverImage}`;
 
-  const staticS =
-    'http://172.16.16.31:5000/api/Users/admin/Desktop/Vignesh/imageBank/1709209056472-480040326.jpg';
+  useEffect(() => {
+    dispatch(apiCallAndStore(getUserPosts({})));
+  }, []);
 
   useEffect(() => {
     LOG('image uri sample :', profileImageUrl);
@@ -131,13 +140,16 @@ const Profile = () => {
     imageEditRB.current.close();
   };
 
+  const renderMyPosts = ({item, index}) => {
+    return <MyPostItem item={item} index={index} />;
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.profileCont}>
         <View style={styles.coverImageCont}>
           <TouchableOpacity onPress={onEditImagePress.bind(this, 0)}>
             <Image
-              // source={require('../../../assets/Images/catCover.jpg')}
               source={{uri: coverImageUrl}}
               resizeMode="cover"
               style={styles.coverImage}
@@ -151,7 +163,6 @@ const Profile = () => {
               {display: isKeyboard ? 'none' : 'flex'},
             ]}>
             <Image
-              // source={require('../../../assets/appIcons/profileImg.jpg')}
               source={{uri: profileImageUrl}}
               style={styles.profileImage}
             />
@@ -203,7 +214,15 @@ const Profile = () => {
           </View>
         </View>
       </View>
-      <View style={styles.postCont}></View>
+      <View style={styles.postCont}>
+        <FlatList
+          data={myPosts}
+          renderItem={renderMyPosts}
+          key={(ite, ind) => ind}
+          numColumns={2}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
 
       <RBSheet
         ref={imageEditRB}
@@ -316,9 +335,11 @@ const styles = StyleSheet.create({
     paddingStart: 15,
     paddingVertical: 5,
   },
+
   postCont: {
     flex: 1,
-    borderWidth: 1,
+    // borderWidth: 1,
+    backgroundColor: 'rgba(128, 128, 128, 0.1)',
   },
 
   rbContainer: {

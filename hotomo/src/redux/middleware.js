@@ -46,7 +46,6 @@ export const apiCallAndStore = createAsyncThunk(
         const apiRes = await axios(apiConfig);
         LOG('Axios Response ====>', apiRes);
         LOG('Status Code :' + apiRes.status);
-
         const apiResData = apiRes.data;
 
         let goNext = false;
@@ -54,7 +53,6 @@ export const apiCallAndStore = createAsyncThunk(
         switch (action.requestType) {
           case staticValues.createUser:
             LOG('createUser_in_middleware :', apiResData);
-
             if (apiResData.status === 1) {
               goNext = true;
               Toast('Account created successfully');
@@ -74,9 +72,7 @@ export const apiCallAndStore = createAsyncThunk(
               HTTP.formDataHeader.Authorization = token;
 
               storeItem('token', token);
-
               RootNav.navigate('homeTab');
-
               dispatch(apiCallAndStore(getAllPost({})));
             } else {
               RootNav.navigate('logIn');
@@ -127,6 +123,13 @@ export const apiCallAndStore = createAsyncThunk(
             }
             break;
 
+          case staticValues.getUserPosts:
+            LOG('getUserPosts_in_middleware :', apiResData);
+            if (apiResData.status === 1) {
+              goNext = true;
+            }
+            break;
+
           default:
             goNext = true;
             break;
@@ -155,6 +158,7 @@ const initialState = {
   loading: false,
   allPosts: [],
   userDetails: {},
+  userPosts: [],
 };
 
 const mainSlice = createSlice({
@@ -200,23 +204,25 @@ const mainSlice = createSlice({
 
           case staticValues.likePost:
             LOG('likePost_in_Reducer :', payload);
-
             const likedData = payload.jsonData;
-
             const postList = state.allPosts;
 
             const changedList = postList.map(post => {
               if (post._id === likedData.postId) {
                 post.youLiked = likedData.reactionType === '1' ? true : false;
               }
-
               return post;
             });
 
-            LOG('our changed liked list :', changedList);
-
             state.allPosts = changedList;
+            break;
 
+          case staticValues.getUserPosts:
+            LOG('getUserPosts_in_Reducer :', payload);
+            state.userPosts = payload.jsonData;
+            break;
+
+          default:
             break;
         }
       }

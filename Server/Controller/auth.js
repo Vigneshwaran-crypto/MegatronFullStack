@@ -302,33 +302,45 @@ export const getAllPosts = async (req, res) => {
     // pos._id.toString()
 
     const posts = await post.find({});
-    const likedList = await postLikedList.find({});
+    const likedList = await postLikedList.find({ userId: user._id.toString() });
 
-    const modifiedList = posts.map((pos) => {
-      const isHas = likedList.find((liked) => {
-        console.log("liked list inside loop :", liked);
+    console.log("postLikedList your liked list getAllPosts :", likedList);
 
-        return user._id.toString() === liked.userId;
-      });
-
-      console.log("checking condition :" + isHas); // it work's but log showing undefined
-
-      if (isHas && isHas.postId === pos._id.toString()) {
+    const changedPosts = posts.map((pos) => {
+      const isHas = likedList.find((lik) => lik.postId === pos._id.toString());
+      if (isHas) {
         pos.youLiked = true;
       }
-
       return pos;
     });
 
-    console.log("updated postList with likes :", modifiedList);
-
     res.status(200).json({
-      data: modifiedList,
+      data: changedPosts,
       message: resMessages.success,
       status: 1,
     });
   } catch (err) {
     console.log("getAllPosts api error :", err);
+    showServerError(res);
+  }
+};
+
+export const getUserPosts = async (req, res) => {
+  console.log("getUserPosts api hit :", req.body);
+  try {
+    const authToken = req.headers.authorization;
+    const user = await getUserFromToken(authToken);
+
+    const usersPost = await post.find({ userId: user._id });
+
+    console.log("getUserPosts usersPost :", usersPost);
+
+    res.status(200).json({
+      data: usersPost,
+      message: resMessages.success,
+      status: 1,
+    });
+  } catch (err) {
     showServerError(res);
   }
 };
@@ -345,10 +357,12 @@ export const likePost = async (req, res) => {
     const reactedPost = await post.find({ _id: postId });
     console.log("reacted post in likePost :", reactedPost);
 
-    const isExistPost = await postLikedList.find({
-      postId: postId,
-      userId: user._id,
-    });
+    const isExistPost = await postLikedList.find(
+      {
+        postId: postId,
+      },
+      { userId: user._id }
+    );
 
     // await postLikedList.
 

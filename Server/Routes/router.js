@@ -4,6 +4,7 @@ import {
   editUserNameOrBio,
   getAllPosts,
   getAllUsers,
+  getUserPosts,
   likePost,
   logIn,
   signIn,
@@ -26,6 +27,7 @@ router.post("/editUserNameOrBio", editUserNameOrBio);
 router.post("/userImagesUpload", userImagesUpload);
 router.post("/createPost", createPost);
 router.post("/getAllPosts", getAllPosts);
+router.post("/userPosts", getUserPosts);
 router.post("/likePost", likePost);
 
 export default router;

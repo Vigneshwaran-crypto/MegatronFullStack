@@ -1,13 +1,5 @@
 import {GET_API_DATA, HTTP, staticValues} from '../common/constant';
 
-export const testAction = () => {
-  return {
-    type: GET_API_DATA,
-    requestType: staticValues.apiTest,
-    requestUrl: HTTP.GET_ALL_PRODUCTS,
-  };
-};
-
 export const logIn = jsonData => {
   return {
     type: GET_API_DATA,
@@ -81,6 +73,15 @@ export const likePostAct = jsonData => {
     type: GET_API_DATA,
     requestType: staticValues.likePost,
     requestUrl: HTTP.LIKE_POST,
+    jsonData,
+  };
+};
+
+export const getUserPosts = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.getUserPosts,
+    requestUrl: HTTP.GET_USER_POSTS,
     jsonData,
   };
 };
