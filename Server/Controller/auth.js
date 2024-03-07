@@ -16,6 +16,7 @@ import fs from "fs";
 import post from "../Modals/post.js";
 import postLikedList from "../Modals/postLikedList.js";
 import mongoose from "mongoose";
+import postComments from "../Modals/postComments.js";
 
 dotenv.config(); // to access .env file
 
@@ -400,6 +401,47 @@ export const likePost = async (req, res) => {
       .json({ data: req.body, message: resMessages.success, status: 1 });
   } catch (err) {
     console.log("likePost api error :", err);
+    showServerError(res);
+  }
+};
+
+export const commentPost = async (req, res) => {
+  console.log("commentPost api hit :", req.body);
+  try {
+    const authToken = req.headers.authorization;
+    const user = await getUserFromToken(authToken);
+
+    const postCmt = await new postComments({
+      userId: user._id,
+      comment: req.body.comment,
+      postId: req.body.postId,
+      userImage: user.profileImage,
+      userName: user.userName,
+    }).save();
+
+    res.status(200).json({
+      data: postCmt,
+      message: resMessages.success,
+      status: 1,
+    });
+  } catch (err) {
+    showServerError(res);
+  }
+};
+
+export const getPostComments = async (req, res) => {
+  console.log("getPostComments api hit :", req.body);
+  try {
+    const postComment = await postComments.find({ postId: req.body.postId });
+
+    console.log("comment for this post :", postComment);
+
+    res.status(200).json({
+      data: postComment,
+      message: resMessages.success,
+      status: 1,
+    });
+  } catch (err) {
     showServerError(res);
   }
 };

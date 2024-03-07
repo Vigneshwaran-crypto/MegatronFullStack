@@ -85,3 +85,21 @@ export const getUserPosts = jsonData => {
     jsonData,
   };
 };
+
+export const getPostComments = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.getPostComments,
+    requestUrl: HTTP.GET_POST_COMMENTS,
+    jsonData,
+  };
+};
+
+export const commentPostAct = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.commentPost,
+    requestUrl: HTTP.COMMENT_POST,
+    jsonData,
+  };
+};

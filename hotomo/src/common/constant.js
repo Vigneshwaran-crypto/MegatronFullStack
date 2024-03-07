@@ -16,6 +16,8 @@ export const staticValues = {
   getAllPosts: 'getAllPosts',
   likePost: 'likePost',
   getUserPosts: 'getUserPosts',
+  commentPost: 'commentPost',
+  getPostComments: 'getPostComments',
 };
 
 export const HTTP = {
@@ -28,6 +30,8 @@ export const HTTP = {
   GET_ALL_POSTS: 'getAllPosts',
   LIKE_POST: 'likePost',
   GET_USER_POSTS: 'userPosts',
+  COMMENT_POST: 'commentPost',
+  GET_POST_COMMENTS: 'getPostComments',
 
   //headers for api call without authorization
   HEADERS: {

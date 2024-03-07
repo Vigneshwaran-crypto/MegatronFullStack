@@ -1,51 +1,76 @@
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {
+  Animated,
   BackHandler,
+  Easing,
   FlatList,
   Keyboard,
+  KeyboardAvoidingView,
+  Modal,
+  ScrollView,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
-import {LOG, globalExitAlert, sSize} from '../../../common/utils';
+import {LOG, Toast, globalExitAlert, sSize} from '../../../common/utils';
 import ActionBar from '../../../components/ActionBar';
 import PostItem from './PostFlow/PostItem';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../../../common/colors';
-import {textFontFace} from '../../../common/styles';
+import {textFontFace, textFontFaceLight} from '../../../common/styles';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {apiCallAndStore} from '../../../redux/middleware';
+import {commentPostAct, getPostComments} from '../../../redux/authAction';
+import CommentItem from './PostFlow/CommentItem';
+import moment from 'moment';
 
-const Home = () => {
+const Home = memo(() => {
   const dispatch = useDispatch();
   const nav = useNavigation();
 
   const allPosts = useSelector(({main}) => main.allPosts);
   const userDetails = useSelector(({main}) => main.userDetails);
+  const postComments = useSelector(({main}) => main.postComments);
 
   const commentRef = useRef(null);
-
-  const [keyCord, setKeyCord] = useState(1);
+  const keyMoveAnime = useRef(new Animated.ValueXY({x: 0, y: 0})).current;
+  const [cmtText, setCmtText] = useState('');
+  const commentPost = useRef({});
 
   useEffect(() => {
     LOG('all post in home screen :', allPosts);
     LOG('userDetails in home screen :', userDetails);
   }, [allPosts]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const date = '2024-03-07T06:52:50.588Z';
+
+    const changedData = moment(date).endOf('minutes').fromNow();
+
+    LOG('changed date format :', changedData);
+  }, []);
 
   useEffect(() => {
     const whileKeyBoardShow = e => {
-      LOG('keyboardShowing :', e);
-      const yCord = e.endCoordinates.height;
-      setKeyCord(yCord);
+      Animated.timing(keyMoveAnime, {
+        toValue: {x: 0, y: -e.endCoordinates.height},
+        useNativeDriver: true,
+        easing: Easing.ease,
+        duration: 0,
+      }).start();
     };
 
     const whileKeyboardHide = () => {
-      setKeyCord(5);
+      Animated.timing(keyMoveAnime, {
+        toValue: {x: 0, y: 0},
+        useNativeDriver: true,
+        duration: 2,
+      }).start();
     };
 
     const showKeyboard = Keyboard.addListener(
@@ -84,8 +109,32 @@ const Home = () => {
   const commentOnPress = post => {
     LOG('clicked comment post :', post);
 
+    const req = {postId: post._id};
+    dispatch(apiCallAndStore(getPostComments(req)));
+
     commentRef.current.open();
+    commentPost.current = post;
   };
+
+  const onCmtSendPress = () => {
+    if (!cmtText) {
+      return Toast('Enter Comment and send');
+    }
+
+    const req = {
+      postId: commentPost.current._id,
+      comment: cmtText,
+    };
+
+    dispatch(apiCallAndStore(commentPostAct(req)));
+
+    Keyboard.dismiss();
+    setCmtText('');
+  };
+
+  const commentItemRenderer = ({item, index}) => (
+    <CommentItem item={item} index={index} />
+  );
 
   const renderPost = ({item, index}) => (
     <PostItem item={item} index={index} onCommentPress={commentOnPress} />
@@ -108,29 +157,53 @@ const Home = () => {
       </View>
 
       <RBSheet
-        // height={Keyboard.isVisible() ? sSize.height : sSize.height / 2}
-        height={sSize.height}
+        height={undefined}
+        openDuration={20}
         animationType="slide"
         closeOnPressBack
         closeOnPressMask
-        // keyboardAvoidingViewEnabled={true}
+        closeOnDragDown
         ref={commentRef}
         customStyles={{
           container: styles.rbContainer,
           wrapper: styles.rbWrapper,
         }}>
-        <View style={styles.commentListContainer}></View>
+        <View style={styles.commentListContainer}>
+          <Text style={styles.commentTopic}>Comments</Text>
 
-        <View style={[styles.commentInputView, {bottom: keyCord}]}>
-          <TextInput style={styles.commentInput} multiline numberOfLines={4} />
-          <TouchableOpacity style={styles.commentSentButton}>
-            <Entypo name={'paper-plane'} color={colors.matteWine} size={30} />
-          </TouchableOpacity>
+          <FlatList
+            data={postComments}
+            renderItem={commentItemRenderer}
+            key={(ite, ind) => ind}
+            ListEmptyComponent={
+              <Text style={styles.commentEmptyText}>No comments to show</Text>
+            }
+          />
         </View>
+
+        <Animated.View
+          style={[
+            styles.commentInputView,
+            {transform: [{translateY: keyMoveAnime.y}]},
+          ]}>
+          <TextInput
+            placeholder="Write Comment"
+            style={styles.commentInput}
+            multiline
+            numberOfLines={4}
+            onChangeText={setCmtText}
+            value={cmtText}
+          />
+          <TouchableOpacity
+            style={styles.commentSentButton}
+            onPress={onCmtSendPress}>
+            <Entypo name={'paper-plane'} color={colors.royalBlue} size={30} />
+          </TouchableOpacity>
+        </Animated.View>
       </RBSheet>
     </View>
   );
-};
+});
 
 export default Home;
 
@@ -142,7 +215,6 @@ const styles = StyleSheet.create({
   feedCont: {
     flex: 1,
     marginTop: 10,
-    // borderWidth: 1,
   },
   postFeedCont: {
     flex: 1,
@@ -157,34 +229,36 @@ const styles = StyleSheet.create({
   },
 
   rbContainer: {
-    // borderWidth: 1,
-    height: '100%',
-    flex: 1,
-    alignSelf: 'center',
+    height: '80%',
+    // height: 'auto',
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
     padding: 10,
-    // justifyContent: 'space-around',
+    justifyContent: 'center',
   },
   rbWrapper: {
-    // borderWidth: 1,
     backgroundColor: 'rgba(2,2, 3, 0.3)',
   },
 
   commentListContainer: {
     flex: 1,
-    // borderWidth: 1,
   },
 
+  commentTopic: {
+    alignSelf: 'center',
+    fontFamily: textFontFace,
+    color: colors.darkBlue,
+    paddingVertical: 5,
+  },
   commentInputView: {
-    // borderWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingHorizontal: 5,
+    backgroundColor: colors.white,
   },
   commentInput: {
     borderWidth: 1,
-    borderColor: colors.matteWine,
+    borderColor: colors.royalBlue,
     width: '85%',
     borderRadius: 10,
     paddingHorizontal: 10,
@@ -192,10 +266,14 @@ const styles = StyleSheet.create({
     color: colors.royalBlue,
   },
   commentSentButton: {
-    // borderWidth: 1,
     flex: 1,
     alignSelf: 'center',
     justifyContent: 'flex-end',
     alignItems: 'center',
+  },
+  commentEmptyText: {
+    fontFamily: textFontFaceLight,
+    color: colors.darkBlue,
+    alignSelf: 'center',
   },
 });

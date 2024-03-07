@@ -130,6 +130,13 @@ export const apiCallAndStore = createAsyncThunk(
             }
             break;
 
+          case staticValues.commentPost:
+            LOG('commentPost_in_middleware :', apiResData);
+            if (apiResData.status === 1) {
+              goNext = true;
+            }
+            break;
+
           default:
             goNext = true;
             break;
@@ -159,6 +166,7 @@ const initialState = {
   allPosts: [],
   userDetails: {},
   userPosts: [],
+  postComments: [],
 };
 
 const mainSlice = createSlice({
@@ -220,6 +228,16 @@ const mainSlice = createSlice({
           case staticValues.getUserPosts:
             LOG('getUserPosts_in_Reducer :', payload);
             state.userPosts = payload.jsonData;
+            break;
+
+          case staticValues.getPostComments:
+            LOG('getPostComments_in_Reducer :', payload);
+            state.postComments = payload.jsonData;
+            break;
+
+          case staticValues.commentPost:
+            LOG('commentPost_in_Reducer :', payload);
+            state.postComments.push(payload.jsonData);
             break;
 
           default:

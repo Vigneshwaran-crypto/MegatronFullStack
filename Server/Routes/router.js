@@ -1,9 +1,11 @@
 import express from "express";
 import {
+  commentPost,
   createPost,
   editUserNameOrBio,
   getAllPosts,
   getAllUsers,
+  getPostComments,
   getUserPosts,
   likePost,
   logIn,
@@ -29,5 +31,7 @@ router.post("/createPost", createPost);
 router.post("/getAllPosts", getAllPosts);
 router.post("/userPosts", getUserPosts);
 router.post("/likePost", likePost);
+router.post("/commentPost", commentPost);
+router.post("/getPostComments", getPostComments);
 
 export default router;
