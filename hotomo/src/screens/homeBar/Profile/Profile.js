@@ -1,3 +1,5 @@
+import {useNavigation} from '@react-navigation/native';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -5,35 +7,33 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  Touchable,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
+import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../../../common/colors';
-import {LOG, sSize} from '../../../common/utils';
+import {serverUrl} from '../../../common/constant';
 import {
   textFontFace,
   textFontFaceLight,
   textFontFaceMedium,
 } from '../../../common/styles';
-import {useDispatch, useSelector} from 'react-redux';
-import {apiCallAndStore} from '../../../redux/middleware';
+import {LOG, globalLogOutAlert, sSize} from '../../../common/utils';
 import {
   editUserNameOrBio,
-  getAllUsers,
   getUserPosts,
   userImagesUpload,
 } from '../../../redux/authAction';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Feather from 'react-native-vector-icons/Feather';
-import {serverUrl} from '../../../common/constant';
+import {apiCallAndStore} from '../../../redux/middleware';
 import MyPostItem from './MyPostItem';
 
 const Profile = () => {
   const dispatch = useDispatch();
+  const nav = useNavigation();
   const userDetails = useSelector(({main}) => main.userDetails);
   const myPosts = useSelector(({main}) => main.userPosts);
 
@@ -80,11 +80,13 @@ const Profile = () => {
   }, []);
 
   const onBioUserNameSubmit = () => {
-    const req = {
-      userName: name,
-      bio,
-    };
-    dispatch(apiCallAndStore(editUserNameOrBio(req)));
+    if (userDetails.bio !== bio || userDetails.userName !== name) {
+      const req = {
+        userName: name,
+        bio,
+      };
+      dispatch(apiCallAndStore(editUserNameOrBio(req)));
+    }
   };
 
   const onEditImagePress = to => {
@@ -154,6 +156,17 @@ const Profile = () => {
               resizeMode="cover"
               style={styles.coverImage}
             />
+
+            <TouchableOpacity
+              style={styles.settingsButton}
+              onPress={() => globalLogOutAlert()}>
+              <AntDesign
+                name={'logout'}
+                color={colors.white}
+                size={sSize.width * 0.07}
+                style={styles.settingIcon}
+              />
+            </TouchableOpacity>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -269,6 +282,19 @@ const styles = StyleSheet.create({
   coverImageCont: {
     flex: 1.7,
   },
+
+  settingsButton: {
+    position: 'absolute',
+    alignSelf: 'flex-end',
+    right: 17,
+    top: 15,
+    backgroundColor: colors.transparent,
+  },
+
+  settingIcon: {
+    shadowColor: colors.black,
+  },
+
   coverImage: {height: '100%', width: '100%'},
   profileImageView: {
     position: 'absolute',

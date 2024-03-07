@@ -8,6 +8,7 @@ import CreateUser from '../screens/auth/CreateUser';
 import {Screen} from 'react-native-screens';
 import CreatePost from '../screens/homeBar/Home/PostFlow/CreatePost';
 import PostGallery from '../screens/homeBar/Home/PostFlow/PostGallery';
+import Settings from '../screens/homeBar/Profile/Settings';
 
 const Router = () => {
   const Stack = createNativeStackNavigator();
@@ -63,6 +64,15 @@ const Router = () => {
         <Stack.Screen
           name="postGallery"
           component={PostGallery}
+          options={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        />
+
+        <Stack.Screen
+          name="settings"
+          component={Settings}
           options={{
             headerShown: false,
             animation: 'slide_from_right',

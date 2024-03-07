@@ -183,6 +183,7 @@ const mainSlice = createSlice({
         switch (payload.requestType) {
           case staticValues.createUser:
             LOG('createUser_in_Reducer :', payload);
+
             break;
 
           case staticValues.logIn:
@@ -207,7 +208,14 @@ const mainSlice = createSlice({
 
           case staticValues.createPost:
             LOG('createPost_in_Reducer :', payload);
-            state.allPosts.push(payload.jsonData);
+            // state.allPosts.push(payload.jsonData);
+
+            const newPost = [payload.jsonData];
+
+            const prevPost = state.allPosts;
+
+            state.allPosts = newPost.concat(prevPost);
+
             break;
 
           case staticValues.likePost:

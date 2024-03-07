@@ -1,4 +1,5 @@
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import moment from 'moment';
 import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {
   Animated,
@@ -6,9 +7,6 @@ import {
   Easing,
   FlatList,
   Keyboard,
-  KeyboardAvoidingView,
-  Modal,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -16,18 +14,16 @@ import {
   View,
 } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {useDispatch, useSelector} from 'react-redux';
-import {LOG, Toast, globalExitAlert, sSize} from '../../../common/utils';
-import ActionBar from '../../../components/ActionBar';
-import PostItem from './PostFlow/PostItem';
 import Entypo from 'react-native-vector-icons/Entypo';
+import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../../../common/colors';
 import {textFontFace, textFontFaceLight} from '../../../common/styles';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {apiCallAndStore} from '../../../redux/middleware';
+import {LOG, Toast, globalExitAlert, sSize} from '../../../common/utils';
+import ActionBar from '../../../components/ActionBar';
 import {commentPostAct, getPostComments} from '../../../redux/authAction';
+import {apiCallAndStore} from '../../../redux/middleware';
 import CommentItem from './PostFlow/CommentItem';
-import moment from 'moment';
+import PostItem from './PostFlow/PostItem';
 
 const Home = memo(() => {
   const dispatch = useDispatch();
@@ -46,14 +42,6 @@ const Home = memo(() => {
     LOG('all post in home screen :', allPosts);
     LOG('userDetails in home screen :', userDetails);
   }, [allPosts]);
-
-  useEffect(() => {
-    const date = '2024-03-07T06:52:50.588Z';
-
-    const changedData = moment(date).endOf('minutes').fromNow();
-
-    LOG('changed date format :', changedData);
-  }, []);
 
   useEffect(() => {
     const whileKeyBoardShow = e => {

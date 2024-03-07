@@ -17,6 +17,7 @@ import post from "../Modals/post.js";
 import postLikedList from "../Modals/postLikedList.js";
 import mongoose from "mongoose";
 import postComments from "../Modals/postComments.js";
+import { assert } from "console";
 
 dotenv.config(); // to access .env file
 
@@ -30,7 +31,7 @@ export const signUp = async (req, res) => {
     const isExist = await User.findOne({ email });
     if (isExist) {
       return res
-        .status(401)
+        .status(200)
         .json({ message: "Email already exists", status: 0, data: {} });
     }
 
@@ -139,6 +140,17 @@ export const editUserNameOrBio = async (req, res) => {
 
     const user = await User.findOne({ _id: userFromToken._id });
 
+    // changing user name in our already posted posts
+    if (user.userName !== userName) {
+      const myPosts = await post.find({ userId: user._id });
+      if (myPosts.length !== 0) {
+        myPosts.forEach(async (item) => {
+          item.userName = userName;
+          await item.save();
+        });
+      }
+    }
+
     user.bio = bio;
     user.userName = userName;
     user.save();
@@ -188,6 +200,17 @@ export const userImagesUpload = async (req, res) => {
             fs.rmSync("/Users/admin/Desktop/Vignesh/imageBank/" + prevImage, {
               force: true,
             });
+          }
+
+          // changing profileImage in our already posted posts
+          if (user.profileImage !== req.file.filename) {
+            const myPosts = await post.find({ userId: user._id });
+            if (myPosts.length !== 0) {
+              myPosts.forEach(async (item) => {
+                item.userImage = req.file.filename;
+                await item.save();
+              });
+            }
           }
 
           user.profileImage = req.file.filename;
@@ -316,7 +339,7 @@ export const getAllPosts = async (req, res) => {
     });
 
     res.status(200).json({
-      data: changedPosts,
+      data: changedPosts.reverse(),
       message: resMessages.success,
       status: 1,
     });

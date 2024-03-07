@@ -101,3 +101,18 @@ export const globalExitAlert = () => {
     },
   ]);
 };
+
+export const globalLogOutAlert = () => {
+  Alert.alert(appJson.displayName, 'Are you sure want to logout ?', [
+    {
+      text: 'Cancel',
+    },
+    {
+      text: 'OK',
+      onPress: () => {
+        removeItem('token');
+        RootNav.navigationRef.reset({index: 0, routes: [{name: 'logIn'}]});
+      },
+    },
+  ]);
+};
