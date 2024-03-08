@@ -9,6 +9,8 @@ import {Screen} from 'react-native-screens';
 import CreatePost from '../screens/homeBar/Home/PostFlow/CreatePost';
 import PostGallery from '../screens/homeBar/Home/PostFlow/PostGallery';
 import Settings from '../screens/homeBar/Profile/Settings';
+import Notification from '../screens/homeBar/Home/NotificationFlow/Notification';
+import Message from '../screens/homeBar/Chat/Message';
 
 const Router = () => {
   const Stack = createNativeStackNavigator();
@@ -76,6 +78,24 @@ const Router = () => {
           options={{
             headerShown: false,
             animation: 'slide_from_right',
+          }}
+        />
+
+        <Stack.Screen
+          name="notification"
+          component={Notification}
+          options={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        />
+
+        <Stack.Screen
+          name="message"
+          component={Message}
+          options={{
+            headerShown: false,
+            animation: 'slide_from_bottom',
           }}
         />
       </Stack.Navigator>

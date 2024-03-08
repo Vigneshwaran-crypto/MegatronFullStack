@@ -8,6 +8,8 @@ import {
 } from '../common/styles';
 import {colors} from '../common/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
+
 import {useNavigation} from '@react-navigation/native';
 
 const ActionBar = () => {
@@ -55,10 +57,10 @@ const ActionBar = () => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={onOptionsPress.bind(this, 2)}>
-          <AntDesign
-            name="hearto"
+          <Feather
+            name="bell"
             color={colors.mediumBlue}
-            size={sSize.width * 0.06}
+            size={sSize.width * 0.063}
           />
         </TouchableOpacity>
       </View>
@@ -72,6 +74,7 @@ const styles = StyleSheet.create({
     height: sSize.height * 0.07,
     justifyContent: 'center',
     flexDirection: 'row',
+    backgroundColor: colors.white,
   },
   profileImageView: {
     flex: 2,

@@ -67,8 +67,6 @@ const Login = () => {
     const mails = 'viki@gmail.com';
 
     console.log(mails.split('@')[0]);
-
-    // dispatch(apiCallAndStore(getAllUsers({})));
   }, []);
 
   const onLogPress = () => {

@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  chatMessage,
   commentPost,
   createPost,
   editUserNameOrBio,
@@ -33,5 +34,6 @@ router.post("/userPosts", getUserPosts);
 router.post("/likePost", likePost);
 router.post("/commentPost", commentPost);
 router.post("/getPostComments", getPostComments);
+router.post("/chatMessages", chatMessage);
 
 export default router;

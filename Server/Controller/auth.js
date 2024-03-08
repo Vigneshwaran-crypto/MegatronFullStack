@@ -469,6 +469,14 @@ export const getPostComments = async (req, res) => {
   }
 };
 
+export const chatMessage = async (req, res) => {
+  console.log("chatMessage api hit :", req.body);
+  try {
+  } catch (err) {
+    showServerError(res);
+  }
+};
+
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = res.body;

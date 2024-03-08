@@ -80,10 +80,6 @@ export const apiCallAndStore = createAsyncThunk(
             }
             break;
 
-          case staticValues.getAllUsers:
-            LOG('getAllUsers_in_middleware :', apiResData);
-            break;
-
           case staticValues.editUserNameOrBio:
             LOG('editUserNameOrBio_in_middleware :', apiResData);
             if (apiResData.status === 1) {
@@ -167,6 +163,7 @@ const initialState = {
   userDetails: {},
   userPosts: [],
   postComments: [],
+  allUsers: [],
 };
 
 const mainSlice = createSlice({
@@ -246,6 +243,11 @@ const mainSlice = createSlice({
           case staticValues.commentPost:
             LOG('commentPost_in_Reducer :', payload);
             state.postComments.push(payload.jsonData);
+            break;
+
+          case staticValues.getAllUsers:
+            LOG('getAllUsers_in_reducer :', payload);
+            state.allUsers = payload.jsonData;
             break;
 
           default:
