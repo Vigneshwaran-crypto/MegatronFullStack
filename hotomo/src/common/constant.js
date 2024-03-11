@@ -1,4 +1,5 @@
 export const GET_API_DATA = 'GET_API_DATA';
+export const JUST_STORE = 'JUST_STORE';
 
 // 172.16.16.28 : always use ip address as domain or api getting network error
 export const serverUrl = 'http://172.16.16.17:5000/api/';
@@ -18,6 +19,8 @@ export const staticValues = {
   getUserPosts: 'getUserPosts',
   commentPost: 'commentPost',
   getPostComments: 'getPostComments',
+  getYourChats: 'getYourChats',
+  clearChats: 'clearChats',
 };
 
 export const HTTP = {
@@ -32,6 +35,7 @@ export const HTTP = {
   GET_USER_POSTS: 'userPosts',
   COMMENT_POST: 'commentPost',
   GET_POST_COMMENTS: 'getPostComments',
+  GET_YOUR_CHATS: 'getYourChats',
 
   //headers for api call without authorization
   HEADERS: {

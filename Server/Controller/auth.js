@@ -18,6 +18,7 @@ import postLikedList from "../Modals/postLikedList.js";
 import mongoose from "mongoose";
 import postComments from "../Modals/postComments.js";
 import { assert } from "console";
+import chats from "../Modals/chats.js";
 
 dotenv.config(); // to access .env file
 
@@ -469,10 +470,55 @@ export const getPostComments = async (req, res) => {
   }
 };
 
-export const chatMessage = async (req, res) => {
-  console.log("chatMessage api hit :", req.body);
+// storing chat msg
+export const chatMessage = async (msg) => {
+  console.log("chatMessage api hit :", msg);
   try {
+    await new chats({
+      senderId: msg.senderId,
+      receiverId: msg.receiverId,
+      msg: msg.msg,
+    }).save();
   } catch (err) {
+    console.log("error occurred in chatMessage :", err);
+  }
+};
+
+export const getYourChats = async (req, res) => {
+  console.log("getYourChats api hit :", req.body);
+  try {
+    const authToken = req.headers.authorization;
+    const user = await getUserFromToken(authToken);
+
+    const { senderId, receiverId } = req.body;
+
+    const yourChat = await chats
+      .find({
+        $or: [
+          { senderId: senderId, receiverId: receiverId },
+          { senderId: receiverId, receiverId: senderId },
+        ],
+      })
+      .populate("senderId", "_id userName");
+
+    // const messages = await chats.find({
+    //   $or: [
+    //     { senderId: senderId, recipientId: recipientId },
+    //     { senderId: recipientId, recipientId: senderId },
+    //   ],
+    // }).populate("senderId", "_id name");
+
+    console.log("your chats from db :", yourChat);
+
+    // console.log("your chats from db :", yourChats);
+
+    res.status(200).json({
+      data: yourChat,
+      message: resMessages.success,
+      status: 1,
+    });
+  } catch (err) {
+    console.log("getYourChats api failure :", err);
     showServerError(res);
   }
 };

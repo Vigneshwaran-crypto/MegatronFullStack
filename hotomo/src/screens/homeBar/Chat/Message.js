@@ -1,6 +1,7 @@
 import {
   Animated,
   Easing,
+  FlatList,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -18,25 +19,67 @@ import {textFontFace, textFontFaceLight} from '../../../common/styles';
 import {LOG, sSize} from '../../../common/utils';
 import {serverUrl} from '../../../common/constant';
 import io from 'socket.io-client';
+import {useDispatch, useSelector} from 'react-redux';
+import MsgItem from './MsgItem';
+import {apiCallAndStore} from '../../../redux/middleware';
+import {clearChats} from '../../../redux/authAction';
 
 const Message = props => {
-  const [msg, setMsg] = useState('');
-
-  const [chats, setChats] = useState([]);
-
+  const dispatch = useDispatch();
   const item = props.route.params.item;
 
-  const keyMoveAnime = useRef(new Animated.ValueXY({x: 0, y: 0})).current;
   const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${item.profileImage}`;
+  const userDetails = useSelector(({main}) => main.userDetails);
+  const allChats = useSelector(({main}) => main.allChats);
+
+  const msgListRef = useRef(null);
+
+  const keyMoveAnime = useRef(new Animated.ValueXY({x: 0, y: 0})).current;
+  const [msg, setMsg] = useState('');
+  const [chats, setChats] = useState([]);
+
+  const [lastMsg, setLastMsg] = useState({});
 
   useEffect(() => {
+    LOG('all chanet in msg screen :', allChats);
+  }, [allChats]);
+
+  useEffect(() => {
+    if (allChats.length !== 0) {
+      setChats(allChats);
+    }
+  }, [allChats]);
+
+  useEffect(() => {
+    if (Object.keys(lastMsg).length !== 0) {
+      setChats([...chats, lastMsg]);
+    }
+  }, [lastMsg]);
+
+  useEffect(() => {
+    msgListRef.current.scrollToEnd({animated: true});
+    LOG('clicked user in chatBox :', item);
+
     const socket = io('http://172.16.16.17:5000');
 
-    socket.on('chat', msg => {
-      LOG('message in client socket :', msg);
-      setChats([...chats, msg]);
+    socket.on('chat', msgs => {
+      LOG('message in client socket :', msgs);
+      userMessages(msgs);
     });
   }, []);
+
+  const userMessages = msg => {
+    if (
+      (msg.senderId === userDetails._id && msg.receiverId === item._id) ||
+      (msg.senderId === item._id && msg.receiverId === userDetails._id)
+    ) {
+      setLastMsg(msg);
+    }
+  };
+
+  useEffect(() => {
+    LOG('changed chats :', chats);
+  }, [chats]);
 
   useEffect(() => {
     LOG('clicked item :', item);
@@ -73,23 +116,35 @@ const Message = props => {
     return () => {
       showKeyboard.remove();
       hideKeyboard.remove();
+      dispatch(apiCallAndStore(clearChats()));
     };
   }, []);
 
   const sentMessage = () => {
     const socket = io('http://172.16.16.17:5000');
 
-    socket.emit('chat', msg);
+    const msgReq = {
+      senderId: userDetails._id,
+      receiverId: item._id,
+      msg,
+      updatedAt: new Date(),
+    };
+
+    socket.emit('chat', msgReq);
 
     Keyboard.dismiss();
     setMsg('');
   };
 
+  const messageItemRender = ({item, index}) => (
+    <MsgItem item={item} index={index} />
+  );
+
   return (
     <KeyboardAvoidingView style={styles.container} behavior={null}>
       <View style={styles.container}>
         <View style={styles.userDetailsHolder}>
-          <TouchableOpacity style={styles.chatCont}>
+          <View style={styles.chatCont}>
             <View style={styles.profileImageHolder}>
               <Image
                 style={styles.profileImage}
@@ -98,10 +153,19 @@ const Message = props => {
             </View>
 
             <Text style={styles.userNameText}>{item.userName}</Text>
-          </TouchableOpacity>
+          </View>
         </View>
 
-        <View style={styles.msgListHolder}></View>
+        <View style={styles.msgListHolder}>
+          <FlatList
+            data={chats}
+            ref={msgListRef}
+            onContentSizeChange={() => msgListRef.current.scrollToEnd()}
+            renderItem={messageItemRender}
+            key={(ite, ind) => ind}
+            keyExtractor={({item, index}) => index}
+          />
+        </View>
 
         <Animated.View
           style={[
@@ -137,7 +201,7 @@ const styles = StyleSheet.create({
 
   userDetailsHolder: {
     // flex: 0.1,
-    position: 'absolute',
+    // position: 'absolute',
     width: '100%',
     top: 0,
     // borderWidth: 1,
@@ -185,8 +249,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     // backgroundColor: colors.white,
 
-    position: 'absolute',
-    bottom: 10,
+    paddingBottom: 10,
+    // position: 'absolute',
+    // bottom: 10,
   },
   commentInput: {
     borderWidth: 1,

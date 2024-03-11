@@ -17,7 +17,7 @@ const chatModal = new Schema(
       require: true,
     },
   },
-  { timestamps }
+  { timestamps: true }
 );
 
 export default mongoose.model("chatModal", chatModal);

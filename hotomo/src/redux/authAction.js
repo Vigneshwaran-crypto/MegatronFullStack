@@ -1,4 +1,5 @@
-import {GET_API_DATA, HTTP, staticValues} from '../common/constant';
+import {GET_API_DATA, HTTP, JUST_STORE, staticValues} from '../common/constant';
+import {LOG} from '../common/utils';
 
 export const logIn = jsonData => {
   return {
@@ -101,5 +102,22 @@ export const commentPostAct = jsonData => {
     requestType: staticValues.commentPost,
     requestUrl: HTTP.COMMENT_POST,
     jsonData,
+  };
+};
+
+export const getYourChatAct = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.getYourChats,
+    requestUrl: HTTP.GET_YOUR_CHATS,
+    jsonData,
+  };
+};
+
+export const clearChats = extraData => {
+  LOG('clearChats action');
+  return {
+    type: JUST_STORE, //must give this fir just storing purpose
+    requestType: staticValues.clearChats,
   };
 };

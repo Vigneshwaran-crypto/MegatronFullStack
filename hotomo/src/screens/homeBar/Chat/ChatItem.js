@@ -1,16 +1,30 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import {sSize} from '../../../common/utils';
+import {LOG, sSize} from '../../../common/utils';
 import {colors} from '../../../common/colors';
 import {serverUrl} from '../../../common/constant';
 import {textFontFace} from '../../../common/styles';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {getYourChatAct} from '../../../redux/authAction';
+import {apiCallAndStore} from '../../../redux/middleware';
 
 const ChatItem = ({item, index}) => {
+  const dispatch = useDispatch();
   const nav = useNavigation();
   const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${item.profileImage}`;
+  const userDetails = useSelector(({main}) => main.userDetails);
 
   const onItemPress = () => {
+    const req = {
+      senderId: userDetails._id.toString(),
+      receiverId: item._id,
+    };
+
+    LOG('checking receiverId :', item._id);
+
+    dispatch(apiCallAndStore(getYourChatAct(req)));
+
     nav.navigate('message', {item});
   };
 

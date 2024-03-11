@@ -8,7 +8,8 @@
     "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "mine": "react-native run-android --port 8088 --deviceId UKRS598HMRUSZPJB"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.16.1",

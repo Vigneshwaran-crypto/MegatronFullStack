@@ -8,6 +8,7 @@ import {
   getAllUsers,
   getPostComments,
   getUserPosts,
+  getYourChats,
   likePost,
   logIn,
   signIn,
@@ -35,5 +36,6 @@ router.post("/likePost", likePost);
 router.post("/commentPost", commentPost);
 router.post("/getPostComments", getPostComments);
 router.post("/chatMessages", chatMessage);
+router.post("/getYourChats", getYourChats);
 
 export default router;

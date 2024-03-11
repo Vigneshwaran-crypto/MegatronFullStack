@@ -1,14 +1,8 @@
+import {StackActions} from '@react-navigation/native';
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {
-  AuthToken,
-  GET_API_DATA,
-  HTTP,
-  serverUrl,
-  staticValues,
-} from '../common/constant';
+import {GET_API_DATA, HTTP, serverUrl, staticValues} from '../common/constant';
 import {LOG, Toast, storeItem} from '../common/utils';
 import * as RootNav from '../router/RootNav';
-import {StackActions} from '@react-navigation/native';
 import {getAllPost} from './authAction';
 
 const axios = require('axios').default;
@@ -16,7 +10,7 @@ const axios = require('axios').default;
 export const apiCallAndStore = createAsyncThunk(
   GET_API_DATA,
   async (action, {dispatch, getState, rejectWithValue}) => {
-    LOG('Api Request Type:', action.requestType);
+    LOG('Api Request Type:', action);
 
     try {
       if (action.type === GET_API_DATA) {
@@ -164,6 +158,7 @@ const initialState = {
   userPosts: [],
   postComments: [],
   allUsers: [],
+  allChats: [],
 };
 
 const mainSlice = createSlice({
@@ -178,11 +173,6 @@ const mainSlice = createSlice({
       state.loading = false; // making loading false
       if (payload) {
         switch (payload.requestType) {
-          case staticValues.createUser:
-            LOG('createUser_in_Reducer :', payload);
-
-            break;
-
           case staticValues.logIn:
             LOG('logIn_in_Reducer :', payload);
             state.userDetails = payload.jsonData;
@@ -190,7 +180,7 @@ const mainSlice = createSlice({
 
           case staticValues.editUserNameOrBio:
             LOG('editUserNameOrBio_in_Reducer :', payload);
-            state.userDetails = {...state.userDetails, ...payload.jsonData}; //adding two objects
+            state.userDetails = {...state.userDetails, ...payload.jsonData};
             break;
 
           case staticValues.userImagesUpload:
@@ -205,28 +195,21 @@ const mainSlice = createSlice({
 
           case staticValues.createPost:
             LOG('createPost_in_Reducer :', payload);
-            // state.allPosts.push(payload.jsonData);
-
             const newPost = [payload.jsonData];
-
             const prevPost = state.allPosts;
-
             state.allPosts = newPost.concat(prevPost);
-
             break;
 
           case staticValues.likePost:
             LOG('likePost_in_Reducer :', payload);
             const likedData = payload.jsonData;
             const postList = state.allPosts;
-
             const changedList = postList.map(post => {
               if (post._id === likedData.postId) {
                 post.youLiked = likedData.reactionType === '1' ? true : false;
               }
               return post;
             });
-
             state.allPosts = changedList;
             break;
 
@@ -248,6 +231,15 @@ const mainSlice = createSlice({
           case staticValues.getAllUsers:
             LOG('getAllUsers_in_reducer :', payload);
             state.allUsers = payload.jsonData;
+            break;
+
+          case staticValues.getYourChats:
+            LOG('getYourChats_in_reducer :', payload);
+            state.allChats = payload.jsonData;
+            break;
+
+          case staticValues.clearChats:
+            state.allChats = [];
             break;
 
           default:

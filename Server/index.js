@@ -7,6 +7,7 @@ import http from "http";
 import router from "./Routes/router.js";
 
 import { Server } from "socket.io";
+import { chatMessage } from "./Controller/auth.js";
 
 const app = express();
 
@@ -42,9 +43,12 @@ app.use("/api", router); //routing hits according to the api's
 
 // webSocket
 io.on("connection", (socket) => {
-  console.log("New user connected :", socket.client.request);
+  console.log("New user connected :");
   socket.on("chat", (msg) => {
     console.log("msg in socket.on :", msg);
+
+    chatMessage(msg);
+
     io.emit("chat", msg);
   });
 });
