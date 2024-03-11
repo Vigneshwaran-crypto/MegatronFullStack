@@ -281,6 +281,7 @@ const styles = StyleSheet.create({
   },
   coverImageCont: {
     flex: 1.7,
+    // borderWidth: 1,
   },
 
   settingsButton: {
@@ -316,8 +317,8 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   profileContView: {
-    flex: 1,
     flexDirection: 'row',
+    height: sSize.width * 0.32,
   },
   followersView: {
     flex: 1,

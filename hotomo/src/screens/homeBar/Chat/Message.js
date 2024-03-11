@@ -1,3 +1,4 @@
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Animated,
   Easing,
@@ -5,24 +6,22 @@ import {
   Image,
   Keyboard,
   KeyboardAvoidingView,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {colors} from '../../../common/colors';
 import Entypo from 'react-native-vector-icons/Entypo';
+import {useDispatch, useSelector} from 'react-redux';
+import io from 'socket.io-client';
+import {colors} from '../../../common/colors';
+import {serverUrl} from '../../../common/constant';
 import {textFontFace, textFontFaceLight} from '../../../common/styles';
 import {LOG, sSize} from '../../../common/utils';
-import {serverUrl} from '../../../common/constant';
-import io from 'socket.io-client';
-import {useDispatch, useSelector} from 'react-redux';
-import MsgItem from './MsgItem';
-import {apiCallAndStore} from '../../../redux/middleware';
 import {clearChats} from '../../../redux/authAction';
+import {apiCallAndStore} from '../../../redux/middleware';
+import MsgItem from './MsgItem';
 
 const Message = props => {
   const dispatch = useDispatch();
@@ -85,8 +84,6 @@ const Message = props => {
     LOG('clicked item :', item);
 
     const whileKeyBoardShow = e => {
-      //   LOG('keyboard movement :', e);
-
       Animated.timing(keyMoveAnime, {
         toValue: {x: 0, y: -5},
         useNativeDriver: true,
@@ -121,19 +118,21 @@ const Message = props => {
   }, []);
 
   const sentMessage = () => {
-    const socket = io('http://172.16.16.17:5000');
+    if (msg) {
+      const socket = io('http://172.16.16.17:5000');
 
-    const msgReq = {
-      senderId: userDetails._id,
-      receiverId: item._id,
-      msg,
-      updatedAt: new Date(),
-    };
+      const msgReq = {
+        senderId: userDetails._id,
+        receiverId: item._id,
+        msg,
+        updatedAt: new Date(),
+      };
 
-    socket.emit('chat', msgReq);
+      socket.emit('chat', msgReq);
 
-    Keyboard.dismiss();
-    setMsg('');
+      Keyboard.dismiss();
+      setMsg('');
+    }
   };
 
   const messageItemRender = ({item, index}) => (
@@ -194,26 +193,22 @@ const Message = props => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // position: 'absolute',
-    // height: '100%',
-    // width: '100%',
   },
 
   userDetailsHolder: {
-    // flex: 0.1,
-    // position: 'absolute',
-    width: '100%',
-    top: 0,
-    // borderWidth: 1,
+    elevation: 20,
+    zIndex: 20,
+    shadowColor: colors.black,
   },
 
   chatCont: {
     flexDirection: 'row',
-    // flex: 1,
     alignItems: 'center',
     backgroundColor: colors.white,
+    elevation: 20,
+    zIndex: 20,
+    shadowColor: colors.black,
     padding: 10,
-    borderRadius: 10,
   },
 
   userNameText: {
@@ -241,17 +236,14 @@ const styles = StyleSheet.create({
 
   msgListHolder: {
     flex: 1,
-    // borderWidth: 1,
+    backgroundColor: colors.halfTrans,
+    marginVertical: 2,
   },
   commentInputView: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingHorizontal: 5,
-    // backgroundColor: colors.white,
-
     paddingBottom: 10,
-    // position: 'absolute',
-    // bottom: 10,
   },
   commentInput: {
     borderWidth: 1,
@@ -266,7 +258,6 @@ const styles = StyleSheet.create({
   },
   commentSentButton: {
     flex: 1,
-    // alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
   },

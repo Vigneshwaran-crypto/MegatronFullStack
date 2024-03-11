@@ -313,6 +313,7 @@ export const getAllUsers = async (req, res) => {
       .status(200)
       .json({ data: users, message: resMessages.success, status: 1 });
   } catch (err) {
+    console.log("getAllUsers api fails :", err);
     showServerError(res);
   }
 };

@@ -134,6 +134,8 @@ const Home = memo(() => {
     }).start();
   };
 
+  const onPostsEndReached = () => {};
+
   const commentItemRenderer = ({item, index}) => (
     <CommentItem item={item} index={index} />
   );
@@ -163,6 +165,7 @@ const Home = memo(() => {
             renderItem={renderPost}
             onMomentumScrollBegin={feedListScroll.bind(this, 0)}
             onMomentumScrollEnd={feedListScroll.bind(this, 1)}
+            onEndReached={onPostsEndReached}
             ListHeaderComponent={<View style={styles.storyCont}></View>}
             showsVerticalScrollIndicator={false}
           />
