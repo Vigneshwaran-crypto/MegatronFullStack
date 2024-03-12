@@ -17,7 +17,7 @@ messaging().setBackgroundMessageHandler(async notify => {
   displayNotification();
 });
 
-notifee.onBackgroundEvent(obs => {
+notifee.onBackgroundEvent(async ({type, detail}) => {
   LOG('backGround event of notifee :', obs);
 });
 

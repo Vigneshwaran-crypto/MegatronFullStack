@@ -8,6 +8,11 @@ import router from "./Routes/router.js";
 
 import { Server } from "socket.io";
 import { chatMessage } from "./Controller/auth.js";
+import accountPath from "./megatron-bdae8-firebase-adminsdk-p3i2p-0a8ea2a265.json" assert { type: "json" }; //proper way to import json in ES6
+
+import admin from "firebase-admin";
+import { assert } from "console";
+import { type } from "os";
 
 const app = express();
 
@@ -19,14 +24,6 @@ app.use(bodyParser.json({ limit: "32mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "32mb", extended: true }));
 
 // accepting image files
-// app.use(
-//   "/Users/admin/Desktop/Vignesh/imageBank",
-//   express.static("/Users/admin/Desktop/Vignesh/imageBank")
-// );
-
-const staticS =
-  "http://172.16.16.31:5000/api/Users/admin/Desktop/Vignesh/imageBank/1709209056472-480040326.jpg";
-
 app.use(
   "/api/Users/admin/Desktop/Vignesh/imageBank",
   express.static("/Users/admin/Desktop/Vignesh/imageBank")
@@ -37,6 +34,22 @@ app.use(cors());
 
 //moran is a logger
 app.use(morgan("dev"));
+
+// fcm implementation
+admin.initializeApp({
+  credential: admin.credential.cert(accountPath),
+  // databaseURL: "http://172.16.16.17:5000",
+});
+
+const fToken =
+  "dhFa8MplTieEq8cm3x-RE9:APA91bE6NKlixd38aCeakmsJQ5tzTnoF9fxi-RwYv4tBnylz3mySLlctf-G6FpfULqWzX2eBbngfYexOSyvv_gFl85GgHmzvSWtAmq2r1LJmbbzEUwmogj1hmLfqscY7TZArAjhhNGpx";
+
+admin.messaging().sendToDevice(fToken, {
+  notification: {
+    title: "Hello Im from nodejs",
+    body: "Hi im vingeshwaran backend developer",
+  },
+});
 
 //localhost:5000/api
 app.use("/api", router); //routing hits according to the api's
