@@ -1,4 +1,4 @@
-package com.hotomo
+package com.hotomo.vigneshwaran
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

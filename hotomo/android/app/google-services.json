@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "902996958666",
+    "project_id": "megatron-bdae8",
+    "storage_bucket": "megatron-bdae8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902996958666:android:c728bf0c1e3357c91d4333",
+        "android_client_info": {
+          "package_name": "com.hotomo.vigneshwaran"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiwn9rMwySxMhGS5tFlSEBVdyC-mgjWjA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

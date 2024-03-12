@@ -7,8 +7,36 @@ import App from './src/screens/app/App';
 import {name as appName} from './app.json';
 import {Provider} from 'react-redux';
 import store from './src/redux/store';
+import {useEffect} from 'react';
+import {LOG, displayNotification} from './src/common/utils';
+import messaging from '@react-native-firebase/messaging';
+import notifee from '@notifee/react-native';
+
+messaging().setBackgroundMessageHandler(async notify => {
+  LOG('push notification inBackGround :', notify);
+  displayNotification();
+});
+
+notifee.onBackgroundEvent(obs => {
+  LOG('backGround event of notifee :', obs);
+});
+
+messaging()
+  .registerDeviceForRemoteMessages()
+  .then(res => {
+    LOG('app registered for pushNotification :', res);
+  })
+  .catch(err => {
+    LOG('app registered for pushNotification failed:', err);
+  });
 
 const PackedApp = () => {
+  useEffect(() => {
+    LOG('===========================');
+    LOG('Megatron FullStack FrontEnd');
+    LOG('===========================');
+  }, []);
+
   return (
     <Provider store={store}>
       <App />

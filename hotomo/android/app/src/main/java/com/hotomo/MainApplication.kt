@@ -1,4 +1,4 @@
-package com.hotomo
+package com.hotomo.vigneshwaran
 
 import android.app.Application
 import com.facebook.react.PackageList

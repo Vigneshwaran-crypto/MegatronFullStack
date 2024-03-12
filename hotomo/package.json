@@ -12,8 +12,11 @@
     "mine": "react-native run-android --port 8088 --deviceId UKRS598HMRUSZPJB"
   },
   "dependencies": {
+    "@notifee/react-native": "^7.8.2",
     "@react-native-async-storage/async-storage": "^1.16.1",
     "@react-native-camera-roll/camera-roll": "^7.4.2",
+    "@react-native-firebase/app": "^19.0.1",
+    "@react-native-firebase/messaging": "^19.0.1",
     "@react-navigation/bottom-tabs": "^6.5.12",
     "@react-navigation/native": "^6.1.10",
     "@react-navigation/native-stack": "^6.9.18",

@@ -18,7 +18,14 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../../../common/colors';
 import {textFontFace, textFontFaceLight} from '../../../common/styles';
-import {LOG, Toast, globalExitAlert, sSize} from '../../../common/utils';
+import {
+  LOG,
+  Toast,
+  displayNotification,
+  getFcmToken,
+  globalExitAlert,
+  sSize,
+} from '../../../common/utils';
 import ActionBar from '../../../components/ActionBar';
 import {
   commentPostAct,
@@ -28,6 +35,7 @@ import {
 import {apiCallAndStore} from '../../../redux/middleware';
 import CommentItem from './PostFlow/CommentItem';
 import PostItem from './PostFlow/PostItem';
+import messaging from '@react-native-firebase/messaging';
 
 const Home = memo(() => {
   const dispatch = useDispatch();
@@ -50,6 +58,7 @@ const Home = memo(() => {
   }, [allPosts]);
 
   useEffect(() => {
+    // comment TextInput handling for goes up while keyboard opening
     const whileKeyBoardShow = e => {
       Animated.timing(keyMoveAnime, {
         toValue: {x: 0, y: -e.endCoordinates.height},
@@ -99,6 +108,23 @@ const Home = memo(() => {
       return () => backHandler.remove();
     }, []),
   );
+
+  useEffect(() => {
+    getPushNotToken();
+
+    //getting realTime notification from fireBase
+
+    const notes = messaging().onMessage(async notifyData => {
+      LOG('Notification data :', notifyData);
+      displayNotification();
+    });
+
+    return () => notes;
+  }, []);
+
+  const getPushNotToken = async () => {
+    const fcmToken = await getFcmToken();
+  };
 
   const commentOnPress = post => {
     LOG('clicked comment post :', post);

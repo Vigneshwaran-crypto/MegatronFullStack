@@ -39,6 +39,10 @@ const Message = props => {
 
   const [lastMsg, setLastMsg] = useState({});
 
+  let curOff = 0;
+
+  const pans = useRef(new Animated.ValueXY()).current;
+
   useEffect(() => {
     LOG('all chanet in msg screen :', allChats);
   }, [allChats]);
@@ -145,8 +149,28 @@ const Message = props => {
         <View style={styles.userDetailsHolder}>
           <View style={styles.chatCont}>
             <View style={styles.profileImageHolder}>
-              <Image
-                style={styles.profileImage}
+              <Animated.Image
+                style={[
+                  styles.profileImage,
+                  {
+                    transform: [
+                      {
+                        translateY: pans.y.interpolate({
+                          inputRange: [-1000, 0],
+                          outputRange: [-100, 0],
+                          extrapolate: 'clamp',
+                        }),
+                      },
+                      {
+                        scale: pans.y.interpolate({
+                          inputRange: [-1000, 0],
+                          outputRange: [20, 1],
+                          extrapolate: 'clamp',
+                        }),
+                      },
+                    ],
+                  },
+                ]}
                 source={{uri: profileImageUrl}}
               />
             </View>
@@ -159,6 +183,19 @@ const Message = props => {
           <FlatList
             data={chats}
             ref={msgListRef}
+            // onScroll={e => {
+            //   LOG(e.nativeEvent.contentOffset.y);
+            //   let dir = e.nativeEvent.contentOffset.y > curOff ? 'down' : 'up';
+            //   curOff = e.nativeEvent.contentOffset.y;
+            //   LOG('scroll direction :', dir);
+            // }}
+
+            onScroll={Animated.event(
+              [{nativeEvent: {contentOffset: {y: pans.y}}}],
+              {
+                useNativeDriver: false,
+              },
+            )}
             onContentSizeChange={() => msgListRef.current.scrollToEnd()}
             renderItem={messageItemRender}
             key={(ite, ind) => ind}

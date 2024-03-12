@@ -26,6 +26,7 @@ const Application = () => {
         'android.permission.READ_MEDIA_IMAGES',
         'android.permission.READ_MEDIA_VIDEO',
         'android.permission.RECORD_AUDIO',
+        'android.permission.POST_NOTIFICATIONS',
       ])
         .then(res => {
           LOG('getting userPermission in application : ', res);
@@ -37,7 +38,7 @@ const Application = () => {
 
     getItem('token')
       .then(res => {
-        LOG('token from local store :', res);
+        LOG('userToken from local :', res);
 
         if (res) {
           const req = {

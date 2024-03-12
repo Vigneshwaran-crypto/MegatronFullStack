@@ -8,6 +8,15 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RootNav from '../router/RootNav.js';
 import appJson from '../../app.json';
+import messaging from '@react-native-firebase/messaging';
+import notifee, {
+  AndroidColor,
+  AndroidImportance,
+  AndroidLaunchActivityFlag,
+  AndroidNotificationSetting,
+  AndroidVisibility,
+  AndroidStyle,
+} from '@notifee/react-native';
 
 const {height, width} = Dimensions.get('window');
 
@@ -115,4 +124,59 @@ export const globalLogOutAlert = () => {
       },
     },
   ]);
+};
+
+export const getFcmToken = async () => {
+  const token = await messaging().getToken();
+  LOG('FCM token client ====> :', token);
+  return token;
+};
+
+export const displayNotification = async data => {
+  await notifee.requestPermission();
+
+  const channel = await notifee.createChannel({
+    id: 'default',
+    name: 'Vigneshwaran',
+    importance: AndroidImportance.HIGH,
+    lightColor: AndroidColor.WHITE,
+    bypassDnd: true,
+    visibility: AndroidVisibility.PUBLIC,
+  });
+
+  await notifee.displayNotification({
+    title: 'Test Notification',
+    body: 'Hello Hustler vigneshwaran',
+    subtitle: appJson.displayName, //showing text with notification //show type of notification
+    android: {
+      channelId: channel,
+      smallIcon: 'ic_launcher_foreground',
+      smallIconLevel: 1000,
+      // chronometerDirection: 'up',
+      // showChronometer: true, //shows timer in notification
+      colorized: true,
+      color: AndroidColor.WHITE,
+      circularLargeIcon: true,
+      largeIcon: require('../../assets/Images/catCover.jpg'), //working
+      importance: AndroidImportance.HIGH,
+      lightUpScreen: true,
+      ticker: 'ticker text',
+      visibility: AndroidVisibility.PUBLIC,
+
+      style: {
+        type: AndroidStyle.BIGPICTURE,
+        picture:
+          'https://images.pexels.com/photos/34299/herbs-flavoring-seasoning-cooking.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+        largeIcon: require('../../assets/Images/catCover.jpg'),
+        title: 'Image title',
+        summary: 'Please use this all',
+      },
+      // progress: {max: 100, current: 10, indeterminate: true},
+      pressAction: {
+        id: 'default',
+        launchActivity: 'default',
+        launchActivityFlags: [AndroidLaunchActivityFlag.SINGLE_TOP],
+      },
+    },
+  });
 };
