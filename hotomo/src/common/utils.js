@@ -171,7 +171,6 @@ export const displayNotification = async data => {
         title: notifyTitle,
         summary: notifyBody,
       },
-
       pressAction: {
         id: 'default',
         launchActivity: 'default',

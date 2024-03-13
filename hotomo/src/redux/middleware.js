@@ -229,16 +229,7 @@ const mainSlice = createSlice({
 
           case staticValues.getAllUsers:
             LOG('getAllUsers_in_reducer :', payload);
-
-            const user = state.userDetails;
-
-            const othersList = payload.jsonData?.filter(
-              item => item._id !== user._id,
-            );
-
-            LOG('others list in getAllUsers :', othersList);
-
-            state.allUsers = othersList;
+            state.allUsers = payload.jsonData;
             break;
 
           case staticValues.getYourChats:

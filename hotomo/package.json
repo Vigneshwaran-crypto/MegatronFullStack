@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "mine": "react-native run-android --port 8088 --deviceId UKRS598HMRUSZPJB"
+    "mine": "react-native run-android --port 8088 --deviceId UKRS598HMRUSZPJB",
+    "san": "react-native run-android --port 8081 --deviceId RZCW82R02SR"
   },
   "dependencies": {
     "@notifee/react-native": "^7.8.2",

@@ -27,7 +27,6 @@ export const getAllUsers = jsonData => {
     requestType: staticValues.getAllUsers,
     requestUrl: HTTP.GET_ALL_USERS,
     jsonData,
-    noAuth: true,
   };
 };
 

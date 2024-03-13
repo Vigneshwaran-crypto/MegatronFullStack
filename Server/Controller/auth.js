@@ -292,40 +292,44 @@ export const createPost = async (req, res) => {
 
         const usersWithFcmTokens = await User.find({
           fcmToken: { $exists: true },
-          _id: { $in: user._id },
+          _id: { $ne: user._id }, //removing posted users
         });
 
-        console.log("users with FCM token from db :", usersWithFcmTokens);
+        // $in  include only matched obj
+        // $ne  remove  matched obj
 
-        const fcmToken =
-          "dhFa8MplTieEq8cm3x-RE9:APA91bGHW8eQQtwVAob4WGjerrD8tIgZN_1wkCMKpHYtxdq6cRgguFhO7tYYdGuiVxkpicldx56k94s9nc0ZKl-OPheXpce0bhmHlORcIl1_gUIkjbRTpsMigKklStoSU9Q01uNf90TV";
+        console.log("users with FCM token from db :", usersWithFcmTokens);
 
         const postImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${req.file.filename}`;
         const profileUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${user.profileImage}`;
 
         // sending notification for post
-        admin
-          .messaging()
-          .send({
-            token: fcmToken,
-            android: {
-              notification: {
-                title: `${user.userName}'s New Post`,
-                body: req.body.bio,
-              },
-              data: {
-                profileUrl,
-                postUrl: postImageUrl,
-                caption: req.body.bio,
-              },
-            },
-          })
-          .then((res) => {
-            console.log("Push notification sent successfully :", res);
-          })
-          .catch((err) => {
-            console.log("Push notification sent failed :", err);
+        if (usersWithFcmTokens.length !== 0) {
+          usersWithFcmTokens.forEach((usr) => {
+            admin
+              .messaging()
+              .send({
+                token: usr.fcmToken,
+                android: {
+                  notification: {
+                    title: `${user.userName}'s New Post`,
+                    body: req.body.bio,
+                  },
+                  data: {
+                    profileUrl,
+                    postUrl: postImageUrl,
+                    caption: req.body.bio,
+                  },
+                },
+              })
+              .then((res) => {
+                console.log("Push notification sent successfully :", res);
+              })
+              .catch((err) => {
+                console.log("Push notification sent failed :", err);
+              });
           });
+        }
 
         return res
           .status(200)
@@ -345,7 +349,12 @@ export const getAllUsers = async (req, res) => {
   console.log("getAllUsers hit :", req.body);
 
   try {
-    const users = await User.find({});
+    const authToken = req.headers.authorization;
+    const user = await getUserFromToken(authToken);
+
+    const users = await User.find({
+      _id: { $ne: user._id }, //removing requested user
+    });
 
     res
       .status(200)
@@ -359,8 +368,11 @@ export const getAllUsers = async (req, res) => {
 export const getAllPosts = async (req, res) => {
   console.log("getAllPosts api hit :", req.body);
   try {
-    const authToken = req.headers.authorization;
+    const { pageNo } = req.body;
 
+    const curPage = pageNo ? pageNo : 1;
+
+    const authToken = req.headers.authorization;
     const user = await getUserFromToken(authToken);
 
     // pos._id.toString()
@@ -378,8 +390,14 @@ export const getAllPosts = async (req, res) => {
       return pos;
     });
 
+    const resData = {
+      posts: changedPosts.reverse(),
+      currentPage: curPage,
+      postsCount: posts.length,
+    };
+
     res.status(200).json({
-      data: changedPosts.reverse(),
+      data: resData,
       message: resMessages.success,
       status: 1,
     });
