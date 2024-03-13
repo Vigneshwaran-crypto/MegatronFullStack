@@ -46,3 +46,5 @@ export const resMessages = {
   missMatchedPass: "Wrong Password",
   strongPassword: "Enter strong password",
 };
+
+export const serverUrl = "http://172.16.16.17:5000/api/";

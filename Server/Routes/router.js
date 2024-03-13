@@ -11,6 +11,7 @@ import {
   getYourChats,
   likePost,
   logIn,
+  saveUsersFcmToken,
   signIn,
   signUp,
   userImagesUpload,
@@ -37,5 +38,6 @@ router.post("/commentPost", commentPost);
 router.post("/getPostComments", getPostComments);
 router.post("/chatMessages", chatMessage);
 router.post("/getYourChats", getYourChats);
+router.post("/saveUsersFcmToken", saveUsersFcmToken);
 
 export default router;

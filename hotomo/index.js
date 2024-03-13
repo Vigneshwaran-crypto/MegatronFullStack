@@ -1,5 +1,6 @@
 /**
  * @format
+ * Author - Vigneshwaran
  */
 
 import {AppRegistry} from 'react-native';
@@ -12,15 +13,6 @@ import {LOG, displayNotification} from './src/common/utils';
 import messaging from '@react-native-firebase/messaging';
 import notifee from '@notifee/react-native';
 
-messaging().setBackgroundMessageHandler(async notify => {
-  LOG('push notification inBackGround :', notify);
-  displayNotification();
-});
-
-notifee.onBackgroundEvent(async ({type, detail}) => {
-  LOG('backGround event of notifee :', obs);
-});
-
 messaging()
   .registerDeviceForRemoteMessages()
   .then(res => {
@@ -29,6 +21,15 @@ messaging()
   .catch(err => {
     LOG('app registered for pushNotification failed:', err);
   });
+
+messaging().setBackgroundMessageHandler(async notify => {
+  LOG('push notification inBackGround :', notify);
+  displayNotification();
+});
+
+notifee.onBackgroundEvent(async ({type, detail}) => {
+  LOG('backGround event :', type);
+});
 
 const PackedApp = () => {
   useEffect(() => {

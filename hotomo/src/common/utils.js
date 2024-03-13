@@ -118,7 +118,8 @@ export const globalLogOutAlert = () => {
     },
     {
       text: 'OK',
-      onPress: () => {
+      onPress: async () => {
+        await messaging().deleteToken(); //deleting token for creating new token for the new logging user
         removeItem('token');
         RootNav.navigationRef.reset({index: 0, routes: [{name: 'logIn'}]});
       },
@@ -133,6 +134,8 @@ export const getFcmToken = async () => {
 };
 
 export const displayNotification = async data => {
+  LOG('displayNotification received notify data :', data);
+
   await notifee.requestPermission();
 
   const channel = await notifee.createChannel({
@@ -144,39 +147,39 @@ export const displayNotification = async data => {
     visibility: AndroidVisibility.PUBLIC,
   });
 
+  const notifyTitle = data.notification.title;
+  const notifyBody = data.notification.body;
+
   await notifee.displayNotification({
-    title: 'Test Notification',
-    body: 'Hello Hustler vigneshwaran',
-    subtitle: appJson.displayName, //showing text with notification //show type of notification
+    title: notifyTitle,
+    body: notifyBody,
+    // subtitle: appJson.displayName, //showing text with notification //show type of notification
     android: {
       channelId: channel,
       smallIcon: 'ic_launcher_foreground',
       smallIconLevel: 1000,
-      // chronometerDirection: 'up',
-      // showChronometer: true, //shows timer in notification
       colorized: true,
       color: AndroidColor.WHITE,
       circularLargeIcon: true,
-      largeIcon: require('../../assets/Images/catCover.jpg'), //working
+      largeIcon: data.data.profileUrl, //working
       importance: AndroidImportance.HIGH,
       lightUpScreen: true,
-      ticker: 'ticker text',
       visibility: AndroidVisibility.PUBLIC,
-
       style: {
         type: AndroidStyle.BIGPICTURE,
-        picture:
-          'https://images.pexels.com/photos/34299/herbs-flavoring-seasoning-cooking.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        largeIcon: require('../../assets/Images/catCover.jpg'),
-        title: 'Image title',
-        summary: 'Please use this all',
+        picture: data.data.postUrl,
+        title: notifyTitle,
+        summary: notifyBody,
       },
-      // progress: {max: 100, current: 10, indeterminate: true},
+
       pressAction: {
         id: 'default',
         launchActivity: 'default',
         launchActivityFlags: [AndroidLaunchActivityFlag.SINGLE_TOP],
       },
+      // chronometerDirection: 'up',
+      // showChronometer: true, //shows timer in notification
+      // progress: {max: 100, current: 10, indeterminate: true},
     },
   });
 };

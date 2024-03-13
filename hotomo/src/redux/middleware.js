@@ -4,7 +4,6 @@ import {GET_API_DATA, HTTP, serverUrl, staticValues} from '../common/constant';
 import {LOG, Toast, storeItem} from '../common/utils';
 import * as RootNav from '../router/RootNav';
 import {getAllPost} from './authAction';
-
 const axios = require('axios').default;
 
 export const apiCallAndStore = createAsyncThunk(

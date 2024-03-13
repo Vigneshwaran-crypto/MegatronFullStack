@@ -4,6 +4,7 @@ import {
   getUserFromToken,
   hashPassword,
   resMessages,
+  serverUrl,
   showServerError,
 } from "../Helpers/helpers.js";
 import { nanoid } from "nanoid";
@@ -17,8 +18,8 @@ import post from "../Modals/post.js";
 import postLikedList from "../Modals/postLikedList.js";
 import mongoose from "mongoose";
 import postComments from "../Modals/postComments.js";
-import { assert } from "console";
 import chats from "../Modals/chats.js";
+import admin from "firebase-admin";
 
 dotenv.config(); // to access .env file
 
@@ -289,6 +290,43 @@ export const createPost = async (req, res) => {
           image: req.file.filename,
         }).save();
 
+        const usersWithFcmTokens = await User.find({
+          fcmToken: { $exists: true },
+          _id: { $in: user._id },
+        });
+
+        console.log("users with FCM token from db :", usersWithFcmTokens);
+
+        const fcmToken =
+          "dhFa8MplTieEq8cm3x-RE9:APA91bGHW8eQQtwVAob4WGjerrD8tIgZN_1wkCMKpHYtxdq6cRgguFhO7tYYdGuiVxkpicldx56k94s9nc0ZKl-OPheXpce0bhmHlORcIl1_gUIkjbRTpsMigKklStoSU9Q01uNf90TV";
+
+        const postImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${req.file.filename}`;
+        const profileUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${user.profileImage}`;
+
+        // sending notification for post
+        admin
+          .messaging()
+          .send({
+            token: fcmToken,
+            android: {
+              notification: {
+                title: `${user.userName}'s New Post`,
+                body: req.body.bio,
+              },
+              data: {
+                profileUrl,
+                postUrl: postImageUrl,
+                caption: req.body.bio,
+              },
+            },
+          })
+          .then((res) => {
+            console.log("Push notification sent successfully :", res);
+          })
+          .catch((err) => {
+            console.log("Push notification sent failed :", err);
+          });
+
         return res
           .status(200)
           .json({ data: newPost, message: resMessages.success, status: 1 });
@@ -502,16 +540,7 @@ export const getYourChats = async (req, res) => {
       })
       .populate("senderId", "_id userName");
 
-    // const messages = await chats.find({
-    //   $or: [
-    //     { senderId: senderId, recipientId: recipientId },
-    //     { senderId: recipientId, recipientId: senderId },
-    //   ],
-    // }).populate("senderId", "_id name");
-
     console.log("your chats from db :", yourChat);
-
-    // console.log("your chats from db :", yourChats);
 
     res.status(200).json({
       data: yourChat,
@@ -520,6 +549,26 @@ export const getYourChats = async (req, res) => {
     });
   } catch (err) {
     console.log("getYourChats api failure :", err);
+    showServerError(res);
+  }
+};
+
+export const saveUsersFcmToken = async (req, res) => {
+  console.log("saveUsersFcmToken api hit :", req.body);
+  try {
+    const authToken = req.headers.authorization;
+    const user = await getUserFromToken(authToken);
+
+    user.fcmToken = req.body.fcmToken;
+    await user.save();
+
+    res.status(200).json({
+      data: {},
+      message: resMessages.success,
+      status: 1,
+    });
+  } catch (err) {
+    console.log("saveUsersFcmToken api error :", err);
     showServerError(res);
   }
 };

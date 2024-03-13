@@ -121,3 +121,12 @@ export const clearChats = extraData => {
     requestType: staticValues.clearChats,
   };
 };
+
+export const saveFcmToken = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.saveUsersFcmToken,
+    requestUrl: HTTP.SAVE_FCM_TOKEN,
+    jsonData,
+  };
+};

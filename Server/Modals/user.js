@@ -37,6 +37,9 @@ const userSchema = new Schema(
       type: String,
       default: "sampleCover.jpg",
     },
+    fcmToken: {
+      type: String,
+    },
     resetCode: { type: String },
   },
   { timestamps: true }

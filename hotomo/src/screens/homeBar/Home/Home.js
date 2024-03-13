@@ -1,5 +1,5 @@
+import messaging from '@react-native-firebase/messaging';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import moment from 'moment';
 import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {
   Animated,
@@ -29,13 +29,12 @@ import {
 import ActionBar from '../../../components/ActionBar';
 import {
   commentPostAct,
-  getAllUsers,
   getPostComments,
+  saveFcmToken,
 } from '../../../redux/authAction';
 import {apiCallAndStore} from '../../../redux/middleware';
 import CommentItem from './PostFlow/CommentItem';
 import PostItem from './PostFlow/PostItem';
-import messaging from '@react-native-firebase/messaging';
 
 const Home = memo(() => {
   const dispatch = useDispatch();
@@ -113,10 +112,9 @@ const Home = memo(() => {
     getPushNotToken();
 
     //getting realTime notification from fireBase
-
     const notes = messaging().onMessage(async notifyData => {
       LOG('Notification data :', notifyData);
-      displayNotification();
+      displayNotification(notifyData);
     });
 
     return () => notes;
@@ -124,6 +122,7 @@ const Home = memo(() => {
 
   const getPushNotToken = async () => {
     const fcmToken = await getFcmToken();
+    dispatch(apiCallAndStore(saveFcmToken({fcmToken})));
   };
 
   const commentOnPress = post => {

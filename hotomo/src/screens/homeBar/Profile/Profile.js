@@ -30,6 +30,7 @@ import {
 } from '../../../redux/authAction';
 import {apiCallAndStore} from '../../../redux/middleware';
 import MyPostItem from './MyPostItem';
+import messaging from '@react-native-firebase/messaging';
 
 const Profile = () => {
   const dispatch = useDispatch();

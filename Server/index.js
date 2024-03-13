@@ -41,16 +41,6 @@ admin.initializeApp({
   // databaseURL: "http://172.16.16.17:5000",
 });
 
-const fToken =
-  "dhFa8MplTieEq8cm3x-RE9:APA91bE6NKlixd38aCeakmsJQ5tzTnoF9fxi-RwYv4tBnylz3mySLlctf-G6FpfULqWzX2eBbngfYexOSyvv_gFl85GgHmzvSWtAmq2r1LJmbbzEUwmogj1hmLfqscY7TZArAjhhNGpx";
-
-admin.messaging().sendToDevice(fToken, {
-  notification: {
-    title: "Hello Im from nodejs",
-    body: "Hi im vingeshwaran backend developer",
-  },
-});
-
 //localhost:5000/api
 app.use("/api", router); //routing hits according to the api's
 
