@@ -116,7 +116,7 @@ export const getYourChatAct = jsonData => {
 export const clearChats = extraData => {
   LOG('clearChats action');
   return {
-    type: JUST_STORE, //must give this fir just storing purpose
+    type: JUST_STORE, //must give this for just storing purpose
     requestType: staticValues.clearChats,
   };
 };
@@ -126,6 +126,15 @@ export const saveFcmToken = jsonData => {
     type: GET_API_DATA,
     requestType: staticValues.saveUsersFcmToken,
     requestUrl: HTTP.SAVE_FCM_TOKEN,
+    jsonData,
+  };
+};
+
+export const deletePostAct = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.deletePost,
+    requestUrl: HTTP.DELETE_POST,
     jsonData,
   };
 };

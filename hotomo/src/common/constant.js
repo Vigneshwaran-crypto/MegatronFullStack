@@ -22,6 +22,7 @@ export const staticValues = {
   getYourChats: 'getYourChats',
   clearChats: 'clearChats',
   saveUsersFcmToken: 'saveUsersFcmToken',
+  deletePost: 'deletePost',
 };
 
 export const HTTP = {
@@ -38,6 +39,7 @@ export const HTTP = {
   GET_POST_COMMENTS: 'getPostComments',
   GET_YOUR_CHATS: 'getYourChats',
   SAVE_FCM_TOKEN: 'saveUsersFcmToken',
+  DELETE_POST: 'deletePost',
 
   //headers for api call without authorization
   HEADERS: {

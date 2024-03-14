@@ -15,7 +15,7 @@ import {apiCallAndStore} from '../../../../redux/middleware';
 import {likePostAct} from '../../../../redux/authAction';
 import moment from 'moment';
 
-const PostItem = ({item, index, onCommentPress}) => {
+const PostItem = ({item, index, onCommentPress, onMenuPress}) => {
   const dispatch = useDispatch();
   const userDetails = useSelector(({main}) => main.userDetails);
 
@@ -27,10 +27,6 @@ const PostItem = ({item, index, onCommentPress}) => {
   const caption = item.caption;
 
   const shortCap = caption.length > 10 ? caption.slice(0, 10) + '...' : caption;
-
-  // useEffect(() => {
-  //   LOG('PostItem comp data : ', item);
-  // }, []);
 
   const likePost = () => {
     const req = {
@@ -60,7 +56,7 @@ const PostItem = ({item, index, onCommentPress}) => {
         </View>
 
         <View style={styles.kebabMenuView}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onMenuPress.bind(this, item)}>
             <Entypo
               size={sSize.width * 0.05}
               color={colors.black}
@@ -163,7 +159,6 @@ const styles = StyleSheet.create({
   },
   postImageCont: {
     marginVertical: 10,
-    // height: sSize.width * 0.95,
     width: '100%',
     borderRadius: 10,
   },

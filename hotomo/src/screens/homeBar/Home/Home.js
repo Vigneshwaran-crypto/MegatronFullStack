@@ -15,6 +15,11 @@ import {
 } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Entypo from 'react-native-vector-icons/Entypo';
+import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Feather from 'react-native-vector-icons/Feather';
+
 import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../../../common/colors';
 import {textFontFace, textFontFaceLight} from '../../../common/styles';
@@ -29,6 +34,8 @@ import {
 import ActionBar from '../../../components/ActionBar';
 import {
   commentPostAct,
+  deletePostAct,
+  getAllPost,
   getPostComments,
   saveFcmToken,
 } from '../../../redux/authAction';
@@ -41,15 +48,19 @@ const Home = memo(() => {
   const nav = useNavigation();
 
   const topBarAnime = useRef(new Animated.ValueXY({x: 0, y: 0})).current;
+  const keyMoveAnime = useRef(new Animated.ValueXY({x: 0, y: 0})).current;
 
   const allPosts = useSelector(({main}) => main.allPosts);
   const userDetails = useSelector(({main}) => main.userDetails);
   const postComments = useSelector(({main}) => main.postComments);
 
-  const commentRef = useRef(null);
-  const keyMoveAnime = useRef(new Animated.ValueXY({x: 0, y: 0})).current;
+  const [menuPost, setMenuPost] = useState({});
   const [cmtText, setCmtText] = useState('');
+
+  const commentRef = useRef(null);
   const commentPost = useRef({});
+  const postMenuRef = useRef(null);
+  const postPageRef = useRef(1);
 
   useEffect(() => {
     LOG('all post in home screen :', allPosts);
@@ -159,14 +170,52 @@ const Home = memo(() => {
     }).start();
   };
 
-  const onPostsEndReached = () => {};
+  const postMenuPress = post => {
+    LOG('clicked item on menu :', post);
+    setMenuPost(post);
+    postMenuRef.current?.open();
+  };
+
+  const onPostsEndReached = () => {
+    LOG('onPostsEndReached :', postPageRef.current);
+
+    dispatch(apiCallAndStore(getAllPost({pageNo: postPageRef.current})));
+
+    postPageRef.current = postPageRef.current + 1;
+
+    LOG('pagNo after increased :', postPageRef.current);
+  };
+
+  // post's options handling
+  const postOptionsPress = act => {
+    switch (act) {
+      case 1: //delete
+        const req = {
+          postId: menuPost._id,
+          image: menuPost.image,
+        };
+        dispatch(apiCallAndStore(deletePostAct(req)));
+        break;
+      case 2: //save
+        break;
+      case 3: //report
+        break;
+    }
+
+    postMenuRef.current?.close();
+  };
 
   const commentItemRenderer = ({item, index}) => (
     <CommentItem item={item} index={index} />
   );
 
   const renderPost = ({item, index}) => (
-    <PostItem item={item} index={index} onCommentPress={commentOnPress} />
+    <PostItem
+      item={item}
+      index={index}
+      onCommentPress={commentOnPress}
+      onMenuPress={postMenuPress}
+    />
   );
 
   return (
@@ -185,18 +234,21 @@ const Home = memo(() => {
         <View style={styles.postFeedCont}>
           <FlatList
             style={styles.feedList}
-            data={allPosts}
+            data={allPosts && allPosts.posts ? allPosts.posts : []}
             key={(ite, ind) => ind}
             renderItem={renderPost}
             onMomentumScrollBegin={feedListScroll.bind(this, 0)}
             onMomentumScrollEnd={feedListScroll.bind(this, 1)}
             onEndReached={onPostsEndReached}
+            contentContainerStyle={{marginBottom: 200}}
+            ListFooterComponent={<View style={styles.postListFooter}></View>}
             ListHeaderComponent={<View style={styles.storyCont}></View>}
             showsVerticalScrollIndicator={false}
           />
         </View>
       </View>
 
+      {/* comment RB sheet */}
       <RBSheet
         height={undefined}
         openDuration={20}
@@ -242,6 +294,57 @@ const Home = memo(() => {
           </TouchableOpacity>
         </Animated.View>
       </RBSheet>
+
+      {/* Post options RB sheet */}
+      <RBSheet
+        ref={postMenuRef}
+        animationType="slide"
+        closeDuration={20}
+        closeOnPressBack
+        closeOnPressMask
+        customStyles={{
+          container: styles.postRbContainer,
+          wrapper: styles.rbWrapper,
+        }}>
+        <View style={styles.postOptionsHolder}>
+          {menuPost.userId === userDetails._id.toString() ? (
+            <TouchableOpacity
+              style={styles.optionCont}
+              onPress={postOptionsPress.bind(this, 1)}>
+              <Ionicons
+                name={'trash-outline'}
+                color={colors.royalBlue}
+                size={sSize.width * 0.07}
+              />
+              <Text style={styles.optionsText}>Delete</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.optionCont}
+              onPress={postOptionsPress.bind(this, 2)}>
+              <Ionicons
+                name={'bookmark-outline'}
+                color={colors.royalBlue}
+                size={sSize.width * 0.07}
+              />
+              <Text style={[styles.optionsText]}>Save</Text>
+            </TouchableOpacity>
+          )}
+
+          <TouchableOpacity
+            style={styles.optionCont}
+            onPress={postOptionsPress.bind(this, 3)}>
+            <Feather
+              name={'alert-triangle'}
+              color={colors.alertRed}
+              size={sSize.width * 0.07}
+            />
+            <Text style={[styles.optionsText, {color: colors.alertRed}]}>
+              Report
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </RBSheet>
     </View>
   );
 });
@@ -262,13 +365,18 @@ const styles = StyleSheet.create({
   feedCont: {
     flex: 1,
     marginTop: 3,
+    // borderWidth: 1,
+    // marginBottom: 100,
   },
   postFeedCont: {
     flex: 1,
     marginBottom: 0.7,
+    // borderWidth: 1,
   },
   feedList: {
+    flex: 1,
     paddingTop: sSize.height * 0.08,
+    paddingBottom: sSize.height * 0.08,
   },
   storyCont: {
     flex: 1,
@@ -322,5 +430,32 @@ const styles = StyleSheet.create({
     fontFamily: textFontFaceLight,
     color: colors.darkBlue,
     alignSelf: 'center',
+  },
+  postRbContainer: {
+    height: '20%',
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+    padding: 10,
+    justifyContent: 'center',
+  },
+  postOptionsHolder: {
+    flex: 1,
+    justifyContent: 'space-evenly',
+    paddingStart: 6,
+  },
+  optionCont: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+  },
+  optionsText: {
+    fontFamily: textFontFace,
+    color: colors.darkBlue,
+    fontSize: sSize.width * 0.045,
+    marginStart: 6,
+  },
+  postListFooter: {
+    height: '20%',
+    width: '100%',
   },
 });

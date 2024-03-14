@@ -370,14 +370,18 @@ export const getAllPosts = async (req, res) => {
   try {
     const { pageNo } = req.body;
 
-    const curPage = pageNo ? pageNo : 1;
+    const curPage = pageNo;
 
     const authToken = req.headers.authorization;
     const user = await getUserFromToken(authToken);
 
-    // pos._id.toString()
+    const pageSize = 10; //your page contains 10 data elements
+    const skipAmount = pageNo * pageSize;
 
-    const posts = await post.find({});
+    const postsLength = (await post.find({})).length;
+
+    const posts = await post.find({}).limit(pageSize).skip(skipAmount); //pagination handled
+
     const likedList = await postLikedList.find({ userId: user._id.toString() });
 
     console.log("postLikedList your liked list getAllPosts :", likedList);
@@ -393,7 +397,7 @@ export const getAllPosts = async (req, res) => {
     const resData = {
       posts: changedPosts.reverse(),
       currentPage: curPage,
-      postsCount: posts.length,
+      postsCount: postsLength,
     };
 
     res.status(200).json({
@@ -587,6 +591,27 @@ export const saveUsersFcmToken = async (req, res) => {
     });
   } catch (err) {
     console.log("saveUsersFcmToken api error :", err);
+    showServerError(res);
+  }
+};
+
+export const deletePost = async (req, res) => {
+  console.log("deletePost api hit :", req.body);
+
+  try {
+    const { postId, image } = req.body;
+    const isDel = await post.deleteOne({ _id: postId });
+    // removing post image in DB
+    fs.rmSync("/Users/admin/Desktop/Vignesh/imageBank/" + image, {
+      force: true,
+    });
+
+    res.status(200).json({
+      data: {},
+      message: resMessages.success,
+      status: 1,
+    });
+  } catch (err) {
     showServerError(res);
   }
 };

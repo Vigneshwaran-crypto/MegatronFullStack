@@ -66,7 +66,7 @@ export const apiCallAndStore = createAsyncThunk(
 
               storeItem('token', token);
               RootNav.navigate('homeTab');
-              dispatch(apiCallAndStore(getAllPost({})));
+              dispatch(apiCallAndStore(getAllPost({pageNo: 1})));
             } else {
               RootNav.navigate('logIn');
               Toast(apiResData.message);
@@ -121,6 +121,13 @@ export const apiCallAndStore = createAsyncThunk(
 
           case staticValues.commentPost:
             LOG('commentPost_in_middleware :', apiResData);
+            if (apiResData.status === 1) {
+              goNext = true;
+            }
+            break;
+
+          case staticValues.deletePost:
+            LOG('deletePost_in_middleware :', apiResData);
             if (apiResData.status === 1) {
               goNext = true;
             }
@@ -189,27 +196,36 @@ const mainSlice = createSlice({
 
           case staticValues.getAllPosts:
             LOG('getAllPosts_in_Reducer :', payload);
-            state.allPosts = payload.jsonData;
+            const postData = payload.jsonData;
+            if (postData && postData.currentPage === 1) {
+              state.allPosts = payload.jsonData;
+            } else {
+              state.allPosts = {
+                currentPage: postData.currentPage,
+                postsCount: postData.postsCount,
+                posts: [...state.allPosts.posts, ...postData.posts], //pagination handled
+              };
+            }
             break;
 
           case staticValues.createPost:
             LOG('createPost_in_Reducer :', payload);
             const newPost = [payload.jsonData];
-            const prevPost = state.allPosts;
-            state.allPosts = newPost.concat(prevPost);
+            const prevPost = state.allPosts.posts;
+            state.allPosts.posts = newPost.concat(prevPost);
             break;
 
           case staticValues.likePost:
             LOG('likePost_in_Reducer :', payload);
             const likedData = payload.jsonData;
-            const postList = state.allPosts;
+            const postList = state.allPosts.posts;
             const changedList = postList.map(post => {
               if (post._id === likedData.postId) {
                 post.youLiked = likedData.reactionType === '1' ? true : false;
               }
               return post;
             });
-            state.allPosts = changedList;
+            state.allPosts.posts = changedList;
             break;
 
           case staticValues.getUserPosts:
@@ -239,6 +255,14 @@ const mainSlice = createSlice({
 
           case staticValues.clearChats:
             state.allChats = [];
+            break;
+
+          case staticValues.deletePost:
+            LOG('deletePost_in_reducer :', payload);
+            const postId = payload.requestData.postId;
+            state.allPosts.posts = state.allPosts.posts.filter(
+              item => postId !== item._id,
+            );
             break;
 
           default:

@@ -3,6 +3,7 @@ import {
   chatMessage,
   commentPost,
   createPost,
+  deletePost,
   editUserNameOrBio,
   getAllPosts,
   getAllUsers,
@@ -39,5 +40,6 @@ router.post("/getPostComments", getPostComments);
 router.post("/chatMessages", chatMessage);
 router.post("/getYourChats", getYourChats);
 router.post("/saveUsersFcmToken", saveUsersFcmToken);
+router.post("/deletePost", deletePost);
 
 export default router;

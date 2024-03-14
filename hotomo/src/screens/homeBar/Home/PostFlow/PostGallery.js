@@ -47,7 +47,7 @@ const PostGallery = () => {
 
   const getPhotosFromLocal = async () => {
     const deviceResources = await CameraRoll.getPhotos({
-      assetType: 'Photos',
+      assetType: 'All',
       include: ['albums', 'filename'],
       first: pageNum.current,
     });
