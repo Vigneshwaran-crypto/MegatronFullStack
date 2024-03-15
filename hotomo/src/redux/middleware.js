@@ -66,7 +66,7 @@ export const apiCallAndStore = createAsyncThunk(
 
               storeItem('token', token);
               RootNav.navigate('homeTab');
-              dispatch(apiCallAndStore(getAllPost({pageNo: 1})));
+              dispatch(apiCallAndStore(getAllPost({pageNo: 0})));
             } else {
               RootNav.navigate('logIn');
               Toast(apiResData.message);
@@ -197,7 +197,7 @@ const mainSlice = createSlice({
           case staticValues.getAllPosts:
             LOG('getAllPosts_in_Reducer :', payload);
             const postData = payload.jsonData;
-            if (postData && postData.currentPage === 1) {
+            if (postData && postData.currentPage === 0) {
               state.allPosts = payload.jsonData;
             } else {
               state.allPosts = {

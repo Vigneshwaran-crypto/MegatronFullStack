@@ -1,4 +1,5 @@
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
@@ -9,17 +10,12 @@ import {
   View,
 } from 'react-native';
 import {launchCamera} from 'react-native-image-picker';
-import {
-  Camera,
-  useCameraDevice,
-  useCameraDevices,
-} from 'react-native-vision-camera';
+import {Camera, useCameraDevice} from 'react-native-vision-camera';
 import {colors} from '../../../../common/colors';
 import {textFontFaceLight} from '../../../../common/styles';
 import {LOG, sSize} from '../../../../common/utils';
 import Header from '../../../../components/Header';
-import ImageCropPicker from 'react-native-image-crop-picker';
-import {useNavigation} from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const PostGallery = () => {
   const nav = useNavigation();
@@ -58,7 +54,7 @@ const PostGallery = () => {
   const listEndReached = dist => {
     defList.current = defList.current + 1;
     if (defList.current !== 0) {
-      pageNum.current = pageNum.current + 30;
+      pageNum.current = pageNum.current + 50;
       getPhotosFromLocal();
     }
   };
@@ -102,7 +98,7 @@ const PostGallery = () => {
 
     const imgJson = {
       uri: image.uri,
-      type: 'image/jpeg',
+      type: img.node.type,
       name: image.filename,
     };
 
@@ -122,6 +118,14 @@ const PostGallery = () => {
             style={styles.itemImage}
             resizeMode="cover"
           />
+          {item.node.type.split('/')[0] === 'video' && (
+            <Ionicons
+              name={'play'}
+              color={colors.white}
+              size={sSize.width * 0.1}
+              style={styles.itemPlayIcon}
+            />
+          )}
         </TouchableOpacity>
       </View>
     );
@@ -174,11 +178,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
   contentCon: {
     flex: 1,
   },
-
   imageItemContainer: {
     flex: 1 / 4,
     borderWidth: 0.7,
@@ -189,14 +191,21 @@ const styles = StyleSheet.create({
   },
   itemImageView: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   itemImage: {
     flex: 1,
     height: '100%',
     width: '100%',
   },
+  itemPlayIcon: {
+    position: 'absolute',
+    zIndex: 6,
+    elevation: 6,
+    shadowColor: colors.black,
+  },
   listHeaderContainer: {
-    // borderWidth: 1,
     flex: 1,
   },
   cameraView: {

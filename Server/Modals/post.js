@@ -35,6 +35,14 @@ const post = new Schema(
       type: String,
       default: "",
     },
+    postType: {
+      type: String,
+      required: true,
+    },
+    thumbnail: {
+      type: String,
+      default: "",
+    },
     youLiked: {
       type: Boolean,
       default: false,

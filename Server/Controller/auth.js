@@ -20,6 +20,14 @@ import mongoose from "mongoose";
 import postComments from "../Modals/postComments.js";
 import chats from "../Modals/chats.js";
 import admin from "firebase-admin";
+import simThumb from "simple-thumbnail";
+
+// generating thumbnail from video
+import ffmpeg from "fluent-ffmpeg";
+import ffmpegPath from "@ffmpeg-installer/ffmpeg";
+import ffprobePath from "@ffprobe-installer/ffprobe";
+ffmpeg.setFfmpegPath(ffmpegPath.path);
+ffmpeg.setFfprobePath(ffprobePath.path);
 
 dotenv.config(); // to access .env file
 
@@ -265,9 +273,11 @@ export const createPost = async (req, res) => {
 
     console.log("createPost user :", user);
 
+    const destinationPath = "/Users/admin/Desktop/Vignesh/imageBank/";
+
     // Upload file local using multer
     const storage = multer.diskStorage({
-      destination: "/Users/admin/Desktop/Vignesh/imageBank",
+      destination: destinationPath,
       filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
         const ext = path.extname(file.originalname);
@@ -281,6 +291,26 @@ export const createPost = async (req, res) => {
       postHandler(req, res, async () => {
         console.log("postHandler :", req.file);
         console.log("postHandler request :", req.body.bio);
+        console.log("postHandler request :", req.body.time);
+
+        const postType = req.file.mimetype.split("/")[0];
+
+        console.log("post Type :", postType);
+
+        // generating thumbnail from video
+        const thumbnailPath =
+          destinationPath + req.file.filename.split(".")[0] + "thumbnail.png";
+        if (postType === "video") {
+          ffmpeg(req.file.path)
+            .seekInput(2)
+            .frames(1)
+            .size("1080x1920")
+            .output(thumbnailPath)
+            .on("end", () => {
+              console.log("thumbnail generated successfully");
+            })
+            .run();
+        }
 
         const newPost = await new post({
           caption: req.body.bio,
@@ -288,20 +318,26 @@ export const createPost = async (req, res) => {
           userId: user._id,
           userImage: user.profileImage,
           image: req.file.filename,
+          postType: postType,
+          thumbnail:
+            postType === "video"
+              ? req.file.filename.split(".")[0] + "thumbnail.png"
+              : "",
         }).save();
 
+        // $in  include only matched obj
+        // $ne  remove  matched obj
         const usersWithFcmTokens = await User.find({
           fcmToken: { $exists: true },
           _id: { $ne: user._id }, //removing posted users
         });
 
-        // $in  include only matched obj
-        // $ne  remove  matched obj
-
         console.log("users with FCM token from db :", usersWithFcmTokens);
 
-        const postImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${req.file.filename}`;
-        const profileUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${user.profileImage}`;
+        const postImageUrl = `${serverUrl + destinationPath}${
+          req.file.filename
+        }`;
+        const profileUrl = `${serverUrl + destinationPath}${user.profileImage}`;
 
         // sending notification for post
         if (usersWithFcmTokens.length !== 0) {

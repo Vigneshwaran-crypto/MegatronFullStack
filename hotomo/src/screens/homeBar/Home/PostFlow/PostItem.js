@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {serverUrl} from '../../../../common/constant';
 import {LOG, sSize} from '../../../../common/utils';
 import {useDispatch, useSelector} from 'react-redux';
@@ -14,6 +14,11 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {apiCallAndStore} from '../../../../redux/middleware';
 import {likePostAct} from '../../../../redux/authAction';
 import moment from 'moment';
+import Video from 'react-native-video';
+import {
+  VideoPlayerComponent,
+  VideoplayerView,
+} from 'react-native-videoplayer-fabric';
 
 const PostItem = ({item, index, onCommentPress, onMenuPress}) => {
   const dispatch = useDispatch();
@@ -25,16 +30,28 @@ const PostItem = ({item, index, onCommentPress, onMenuPress}) => {
   const [showFull, setShowFull] = useState(false);
 
   const caption = item.caption;
-
   const shortCap = caption.length > 10 ? caption.slice(0, 10) + '...' : caption;
+
+  const playerRef = useRef();
 
   const likePost = () => {
     const req = {
       postId: item._id,
       reactionType: '1',
     };
-
     dispatch(apiCallAndStore(likePostAct(req)));
+  };
+
+  useEffect(() => {
+    playerRef.current?.play();
+  }, []);
+
+  const onVideoError = err => {
+    LOG('video error :', err);
+  };
+
+  const onVideoBuffer = buff => {
+    LOG('onVideoBuffer :', buff);
   };
 
   return (
@@ -68,13 +85,37 @@ const PostItem = ({item, index, onCommentPress, onMenuPress}) => {
       </View>
 
       <View style={styles.postImageCont}>
-        <Image
-          source={{uri: postImageUri}}
-          resizeMode="cover"
-          resizeMethod="resize"
-          style={styles.postImage}
-          blurRadius={showFull ? 5 : 0}
-        />
+        {item.postType === 'video' ? (
+          <View style={styles.videoHolder}>
+            <Video
+              source={{uri: postImageUri, customImageUri: profileImageUrl}}
+              onError={onVideoError}
+              style={{flex: 1, height: sSize.height / 2, width: sSize.width}}
+            />
+            {/* <VideoPlayerComponent
+              ref={playerRef}
+              videoUrl={postImageUri}
+              needsOffscreenAlphaCompositing
+              onErrorEvent={onVideoError}
+              style={{flex: 1, height: sSize.height / 2, width: sSize.width}}
+            /> */}
+
+            {/* <VideoplayerView
+              videoUrl={postImageUri}
+              needsOffscreenAlphaCompositing={true}
+              onErrorEvent={onVideoError}
+              style={{flex: 1, height: sSize.height / 2, width: sSize.width}}
+            /> */}
+          </View>
+        ) : (
+          <Image
+            source={{uri: postImageUri}}
+            resizeMode="cover"
+            resizeMethod="resize"
+            style={styles.postImage}
+            blurRadius={showFull ? 5 : 0}
+          />
+        )}
 
         <TouchableOpacity
           style={styles.captionTextView}
@@ -206,6 +247,11 @@ const styles = StyleSheet.create({
     fontSize: sSize.width * 0.03,
     marginVertical: 5,
     lineHeight: 13,
+  },
+
+  videoHolder: {
+    flex: 1,
+    alignItems: 'center',
   },
 });
 

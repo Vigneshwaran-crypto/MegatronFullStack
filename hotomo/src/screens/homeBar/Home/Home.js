@@ -60,7 +60,7 @@ const Home = memo(() => {
   const commentRef = useRef(null);
   const commentPost = useRef({});
   const postMenuRef = useRef(null);
-  const postPageRef = useRef(1);
+  const postPageRef = useRef(0);
 
   useEffect(() => {
     LOG('all post in home screen :', allPosts);
@@ -179,11 +179,11 @@ const Home = memo(() => {
   const onPostsEndReached = () => {
     LOG('onPostsEndReached :', postPageRef.current);
 
-    dispatch(apiCallAndStore(getAllPost({pageNo: postPageRef.current})));
-
     postPageRef.current = postPageRef.current + 1;
 
     LOG('pagNo after increased :', postPageRef.current);
+
+    dispatch(apiCallAndStore(getAllPost({pageNo: postPageRef.current})));
   };
 
   // post's options handling
@@ -240,7 +240,7 @@ const Home = memo(() => {
             onMomentumScrollBegin={feedListScroll.bind(this, 0)}
             onMomentumScrollEnd={feedListScroll.bind(this, 1)}
             onEndReached={onPostsEndReached}
-            contentContainerStyle={{marginBottom: 200}}
+            contentContainerStyle={{paddingBottom: sSize.width * 0.14}}
             ListFooterComponent={<View style={styles.postListFooter}></View>}
             ListHeaderComponent={<View style={styles.storyCont}></View>}
             showsVerticalScrollIndicator={false}

@@ -19,10 +19,13 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch} from 'react-redux';
 import {apiCallAndStore} from '../../../../redux/middleware';
 import {createPost} from '../../../../redux/authAction';
+import {createThumbnail} from 'react-native-create-thumbnail';
 
 const CreatePost = props => {
   const dispatch = useDispatch();
   const post = props.route.params.post;
+
+  const postType = post.type.split('/')[0];
 
   const [bio, setBio] = useState('');
 
