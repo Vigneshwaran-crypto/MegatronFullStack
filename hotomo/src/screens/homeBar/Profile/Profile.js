@@ -16,7 +16,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../../../common/colors';
-import {serverUrl} from '../../../common/constant';
+import {filePath, serverUrl} from '../../../common/constant';
 import {
   textFontFace,
   textFontFaceLight,
@@ -47,8 +47,8 @@ const Profile = () => {
 
   const isProfOrCover = useRef(0);
 
-  const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${userDetails.profileImage}`;
-  const coverImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${userDetails.coverImage}`;
+  const profileImageUrl = filePath + userDetails.profileImage;
+  const coverImageUrl = filePath + userDetails.coverImage;
 
   useEffect(() => {
     dispatch(apiCallAndStore(getUserPosts({})));

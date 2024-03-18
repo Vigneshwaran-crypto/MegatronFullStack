@@ -62,6 +62,8 @@ const Home = memo(() => {
   const postMenuRef = useRef(null);
   const postPageRef = useRef(0);
 
+  const [viewableItemIndex, setViewableItemIndex] = useState(0);
+
   useEffect(() => {
     LOG('all post in home screen :', allPosts);
     LOG('userDetails in home screen :', userDetails);
@@ -205,6 +207,12 @@ const Home = memo(() => {
     postMenuRef.current?.close();
   };
 
+  const onViewableItemsChanged = useCallback(({viewableItems, changed}) => {
+    if (viewableItems.length !== 0) {
+      setViewableItemIndex(viewableItems[0].index);
+    }
+  }, []);
+
   const commentItemRenderer = ({item, index}) => (
     <CommentItem item={item} index={index} />
   );
@@ -215,6 +223,7 @@ const Home = memo(() => {
       index={index}
       onCommentPress={commentOnPress}
       onMenuPress={postMenuPress}
+      visibleItemIndex={viewableItemIndex}
     />
   );
 
@@ -244,6 +253,12 @@ const Home = memo(() => {
             ListFooterComponent={<View style={styles.postListFooter}></View>}
             ListHeaderComponent={<View style={styles.storyCont}></View>}
             showsVerticalScrollIndicator={false}
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={{
+              viewAreaCoveragePercentThreshold: 50,
+            }}
+            windowSize={100} //preventing blank space
+            removeClippedSubviews={true}
           />
         </View>
       </View>

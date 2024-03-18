@@ -1,4 +1,12 @@
 {
   "name": "hotomo",
-  "displayName": "Hotomo"
+  "displayName": "Hotomo",
+  "production": {
+    "serverUrl": "https://bm.learning.betalearnings.com/hotomo/api/",
+    "filesPath": "bm.learning.betalearnings.com/opt/hotomoAssets/"
+  },
+  "testing": {
+    "serverUrl": "http://172.16.16.17:5000/api/",
+    "filesPath": "Users/admin/Desktop/Vignesh/imageBank/"
+  }
 }

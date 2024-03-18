@@ -5,11 +5,11 @@ import {textFontFace, textFontFaceMedium} from '../common/styles';
 import IoniCons from 'react-native-vector-icons/Ionicons';
 import {colors} from '../common/colors';
 import {useSelector} from 'react-redux';
-import {serverUrl} from '../common/constant';
+import {filePath, serverUrl} from '../common/constant';
 
 const Header = ({title, profile}) => {
   const userDetails = useSelector(({main}) => main.userDetails);
-  const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${userDetails.profileImage}`;
+  const profileImageUrl = filePath + userDetails.profileImage;
 
   return (
     <View style={styles.container}>

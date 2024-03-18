@@ -1,6 +1,7 @@
 import User from "../Modals/user.js";
 import {
   comparedPassword,
+  destinationPath,
   getUserFromToken,
   hashPassword,
   resMessages,
@@ -26,6 +27,7 @@ import simThumb from "simple-thumbnail";
 import ffmpeg from "fluent-ffmpeg";
 import ffmpegPath from "@ffmpeg-installer/ffmpeg";
 import ffprobePath from "@ffprobe-installer/ffprobe";
+import { LOADIPHLPAPI } from "dns";
 ffmpeg.setFfmpegPath(ffmpegPath.path);
 ffmpeg.setFfprobePath(ffprobePath.path);
 
@@ -187,7 +189,7 @@ export const userImagesUpload = async (req, res) => {
 
     // uploading file in local
     const storage = multer.diskStorage({
-      destination: "/Users/admin/Desktop/Vignesh/imageBank",
+      destination: destinationPath,
       filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
         const ext = path.extname(file.originalname);
@@ -207,7 +209,7 @@ export const userImagesUpload = async (req, res) => {
         if (Object.keys(req.file ? req.file : {}).length !== 0) {
           const prevImage = user.profileImage;
           if (prevImage !== "sampleProfile.jpg") {
-            fs.rmSync("/Users/admin/Desktop/Vignesh/imageBank/" + prevImage, {
+            fs.rmSync(destinationPath + prevImage, {
               force: true,
             });
           }
@@ -238,10 +240,7 @@ export const userImagesUpload = async (req, res) => {
         if (Object.keys(req.file ? req.file : {}).length !== 0) {
           const prevCoverImage = user.coverImage;
           if (prevCoverImage !== "sampleCover.jpg") {
-            fs.rmSync(
-              "/Users/admin/Desktop/Vignesh/imageBank/" + prevCoverImage,
-              { force: true }
-            );
+            fs.rmSync(destinationPath + prevCoverImage, { force: true });
           }
 
           user.coverImage = req.file.filename;
@@ -272,8 +271,6 @@ export const createPost = async (req, res) => {
     const user = await User.findOne({ _id: userFromToken._id });
 
     console.log("createPost user :", user);
-
-    const destinationPath = "/Users/admin/Desktop/Vignesh/imageBank/";
 
     // Upload file local using multer
     const storage = multer.diskStorage({
@@ -550,6 +547,28 @@ export const commentPost = async (req, res) => {
   }
 };
 
+export const deleteComment = async (req, res) => {
+  console.log("deleteComment api hit :", req.body);
+  try {
+    await postComments
+      .deleteOne({ _id: req.body.id })
+      .then((del) => {
+        console.log("comment deleted :", del);
+      })
+      .catch((err) => {
+        console.log("deleteComment delete failed :", err);
+      });
+
+    res.status(200).json({
+      data: {},
+      message: resMessages.success,
+      status: 1,
+    });
+  } catch (err) {
+    showServerError(res);
+  }
+};
+
 export const getPostComments = async (req, res) => {
   console.log("getPostComments api hit :", req.body);
   try {
@@ -638,7 +657,7 @@ export const deletePost = async (req, res) => {
     const { postId, image } = req.body;
     const isDel = await post.deleteOne({ _id: postId });
     // removing post image in DB
-    fs.rmSync("/Users/admin/Desktop/Vignesh/imageBank/" + image, {
+    fs.rmSync(destinationPath + image, {
       force: true,
     });
 

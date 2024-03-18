@@ -3,7 +3,6 @@ import {
   Animated,
   Easing,
   FlatList,
-  Image,
   Keyboard,
   KeyboardAvoidingView,
   StyleSheet,
@@ -16,7 +15,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {useDispatch, useSelector} from 'react-redux';
 import io from 'socket.io-client';
 import {colors} from '../../../common/colors';
-import {serverUrl} from '../../../common/constant';
+import {filePath} from '../../../common/constant';
 import {textFontFace, textFontFaceLight} from '../../../common/styles';
 import {LOG, sSize} from '../../../common/utils';
 import {clearChats} from '../../../redux/authAction';
@@ -27,7 +26,7 @@ const Message = props => {
   const dispatch = useDispatch();
   const item = props.route.params.item;
 
-  const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${item.profileImage}`;
+  const profileImageUrl = filePath + item.profileImage;
   const userDetails = useSelector(({main}) => main.userDetails);
   const allChats = useSelector(({main}) => main.allChats);
 
@@ -183,13 +182,6 @@ const Message = props => {
           <FlatList
             data={chats}
             ref={msgListRef}
-            // onScroll={e => {
-            //   LOG(e.nativeEvent.contentOffset.y);
-            //   let dir = e.nativeEvent.contentOffset.y > curOff ? 'down' : 'up';
-            //   curOff = e.nativeEvent.contentOffset.y;
-            //   LOG('scroll direction :', dir);
-            // }}
-
             onScroll={Animated.event(
               [{nativeEvent: {contentOffset: {y: pans.y}}}],
               {
@@ -199,7 +191,7 @@ const Message = props => {
             onContentSizeChange={() => msgListRef.current.scrollToEnd()}
             renderItem={messageItemRender}
             key={(ite, ind) => ind}
-            keyExtractor={({item, index}) => index}
+            keyExtractor={(item, index) => index.toString()}
           />
         </View>
 
@@ -231,13 +223,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
   userDetailsHolder: {
     elevation: 20,
     zIndex: 20,
     shadowColor: colors.black,
   },
-
   chatCont: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -247,13 +237,11 @@ const styles = StyleSheet.create({
     shadowColor: colors.black,
     padding: 10,
   },
-
   userNameText: {
     fontFamily: textFontFace,
     color: colors.darkBlue,
     marginStart: 12,
   },
-
   profileImageHolder: {
     height: sSize.width * 0.12,
     width: sSize.width * 0.12,
@@ -270,7 +258,6 @@ const styles = StyleSheet.create({
     borderRadius: sSize.width * 0.1,
     resizeMode: 'cover',
   },
-
   msgListHolder: {
     flex: 1,
     backgroundColor: colors.halfTrans,

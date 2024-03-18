@@ -1,8 +1,19 @@
+import appConfig from '../../app.json';
+
 export const GET_API_DATA = 'GET_API_DATA';
 export const JUST_STORE = 'JUST_STORE';
 
-// 172.16.16.28 : always use ip address as domain or api getting network error
-export const serverUrl = 'http://172.16.16.17:5000/api/';
+// 172.16.16.28 : always use ip address as domain or api getting network error :'http://172.16.16.17:5000/api/'
+
+const isTesting = !false;
+
+export const serverUrl = isTesting
+  ? appConfig.testing.serverUrl
+  : appConfig.production.serverUrl;
+
+export const filePath = isTesting
+  ? serverUrl + appConfig.testing.filesPath
+  : serverUrl + appConfig.production.filesPath;
 
 export const AuthToken = '';
 
@@ -23,6 +34,7 @@ export const staticValues = {
   clearChats: 'clearChats',
   saveUsersFcmToken: 'saveUsersFcmToken',
   deletePost: 'deletePost',
+  deleteComment: 'deleteComment',
 };
 
 export const HTTP = {
@@ -37,6 +49,7 @@ export const HTTP = {
   GET_USER_POSTS: 'userPosts',
   COMMENT_POST: 'commentPost',
   GET_POST_COMMENTS: 'getPostComments',
+  DELETE_COMMENT: 'deleteComment',
   GET_YOUR_CHATS: 'getYourChats',
   SAVE_FCM_TOKEN: 'saveUsersFcmToken',
   DELETE_POST: 'deletePost',

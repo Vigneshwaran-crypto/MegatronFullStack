@@ -104,6 +104,15 @@ export const commentPostAct = jsonData => {
   };
 };
 
+export const deleteCommentAct = jsonData => {
+  return {
+    type: GET_API_DATA,
+    requestType: staticValues.deleteComment,
+    requestUrl: HTTP.DELETE_COMMENT,
+    jsonData,
+  };
+};
+
 export const getYourChatAct = jsonData => {
   return {
     type: GET_API_DATA,

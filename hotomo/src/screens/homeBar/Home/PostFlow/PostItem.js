@@ -1,6 +1,6 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {serverUrl} from '../../../../common/constant';
+import {filePath, serverUrl} from '../../../../common/constant';
 import {LOG, sSize} from '../../../../common/utils';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -15,13 +15,20 @@ import {apiCallAndStore} from '../../../../redux/middleware';
 import {likePostAct} from '../../../../redux/authAction';
 import moment from 'moment';
 import Video, {DRMType, VideoRef} from 'react-native-video';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const PostItem = ({item, index, onCommentPress, onMenuPress}) => {
+const PostItem = ({
+  item,
+  index,
+  onCommentPress,
+  onMenuPress,
+  visibleItemIndex,
+}) => {
   const dispatch = useDispatch();
   const userDetails = useSelector(({main}) => main.userDetails);
 
-  const postImageUri = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${item.image}`;
-  const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${item.userImage}`;
+  const postImageUri = filePath + item.image;
+  const profileImageUrl = filePath + item.userImage;
 
   const [showFull, setShowFull] = useState(false);
 
@@ -29,6 +36,8 @@ const PostItem = ({item, index, onCommentPress, onMenuPress}) => {
   const shortCap = caption.length > 10 ? caption.slice(0, 10) + '...' : caption;
 
   const playerRef = useRef(VideoRef);
+
+  const [showPlayAgain, setShowPlayAgain] = useState(false);
 
   const likePost = () => {
     const req = {
@@ -47,6 +56,15 @@ const PostItem = ({item, index, onCommentPress, onMenuPress}) => {
     LOG('onVideoBuffer :', buff);
   };
 
+  const onPlayedEnd = () => {
+    LOG('Played video ended :');
+    setShowPlayAgain(true);
+  };
+
+  const onPlayAgainPress = () => {
+    setShowPlayAgain(false);
+  };
+
   return (
     <View key={index} style={styles.container}>
       <View style={styles.profileView}>
@@ -54,6 +72,7 @@ const PostItem = ({item, index, onCommentPress, onMenuPress}) => {
           <Image
             source={{uri: profileImageUrl}}
             resizeMode="cover"
+            resizeMethod="resize"
             style={styles.profileImageCont}
           />
         </View>
@@ -86,17 +105,33 @@ const PostItem = ({item, index, onCommentPress, onMenuPress}) => {
               drm={DRMType.WIDEVINE}
               source={{uri: postImageUri, customImageUri: profileImageUrl}}
               onError={onVideoError}
-              style={{flex: 1, height: sSize.height / 2, width: sSize.width}}
+              onEnd={onPlayedEnd}
+              repeat={!showPlayAgain}
+              paused={index !== visibleItemIndex || showPlayAgain}
+              style={{flex: 1, height: sSize.height / 1.5, width: sSize.width}}
             />
+
+            {showPlayAgain && (
+              <TouchableOpacity
+                style={styles.itemPlayIcon}
+                onPress={onPlayAgainPress}>
+                <Ionicons
+                  name={'play'}
+                  color={colors.white}
+                  size={sSize.width * 0.25}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         ) : (
-          <Image
-            source={{uri: postImageUri}}
-            resizeMode="cover"
-            resizeMethod="resize"
-            style={styles.postImage}
-            blurRadius={showFull ? 5 : 0}
-          />
+          <View style={styles.postImageHolder}>
+            <Image
+              source={{uri: postImageUri}}
+              resizeMethod="resize"
+              style={styles.postImage}
+              blurRadius={showFull ? 5 : 0}
+            />
+          </View>
         )}
 
         <TouchableOpacity
@@ -185,9 +220,17 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 10,
   },
+  postImageHolder: {
+    alignSelf: 'center',
+    width: '100%',
+    height: '100%',
+    flex: 1,
+  },
   postImage: {
     width: undefined,
     height: undefined,
+    // width: sSize.width,
+    // height: sSize.height / 1.5,
     aspectRatio: 1,
     flex: 1,
   },
@@ -234,6 +277,13 @@ const styles = StyleSheet.create({
   videoHolder: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  itemPlayIcon: {
+    position: 'absolute',
+    zIndex: 6,
+    elevation: 6,
+    shadowColor: colors.black,
   },
 });
 

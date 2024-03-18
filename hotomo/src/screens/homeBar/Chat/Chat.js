@@ -1,6 +1,6 @@
 import {FlatList, Image, StyleSheet, Text, TextInput, View} from 'react-native';
 import React, {useEffect} from 'react';
-import {serverUrl} from '../../../common/constant';
+import {filePath, serverUrl} from '../../../common/constant';
 import socket from './SocketIo';
 import {LOG, sSize} from '../../../common/utils';
 import {useDispatch, useSelector} from 'react-redux';
@@ -17,7 +17,7 @@ const Chat = () => {
   const allUsers = useSelector(({main}) => main.allUsers);
   const userDetails = useSelector(({main}) => main.userDetails);
 
-  const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${userDetails.profileImage}`;
+  const profileImageUrl = filePath + userDetails.profileImage;
 
   useEffect(() => {
     dispatch(apiCallAndStore(getAllUsers({})));

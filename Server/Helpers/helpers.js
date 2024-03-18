@@ -2,6 +2,16 @@ import bcrypt, { hash } from "bcrypt";
 import { decode } from "jsonwebtoken";
 import User from "../Modals/user.js";
 
+export const isTesting = !false;
+
+export const serverUrl = isTesting
+  ? "http://172.16.16.17:5000/api/"
+  : "https://bm.learning.betalearnings.com/hotomo/api/";
+
+export const destinationPath = isTesting
+  ? "/Users/admin/Desktop/Vignesh/imageBank/"
+  : "/opt/hotomoAssets/";
+
 export const hashPassword = (password) => {
   return new Promise((resolve, reject) => {
     bcrypt.genSalt(12, (err, salt) => {
@@ -46,5 +56,3 @@ export const resMessages = {
   missMatchedPass: "Wrong Password",
   strongPassword: "Enter strong password",
 };
-
-export const serverUrl = "http://172.16.16.17:5000/api/";

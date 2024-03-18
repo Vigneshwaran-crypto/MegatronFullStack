@@ -5935,15 +5935,10 @@ react-native-video@^6.0.0-beta.5:
   resolved "https://registry.npmjs.org/react-native-video/-/react-native-video-6.0.0-beta.5.tgz"
   integrity sha512-dAfIXvtxsMI8TE3Q+1MHTP1brq3/V2VsPKVDtU8E+JcF963y5upnBb8JFiG8Yl4s4qAoQum2P02fZE30stQOHg==
 
-react-native-videoplayer-fabric@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.npmjs.org/react-native-videoplayer-fabric/-/react-native-videoplayer-fabric-0.1.5.tgz"
-  integrity sha512-aqxl/k8oZNkatqZZmJpYxyCcNSktE7sKGr/ODjGBqUIsLKIRu8Oo045UNj7YML9OlVzZsoEllLDEy5g4QNFWug==
-
-react-native-vision-camera@^3.9.0:
-  version "3.9.0"
-  resolved "https://registry.npmjs.org/react-native-vision-camera/-/react-native-vision-camera-3.9.0.tgz"
-  integrity sha512-q0HejFTS56s5DXWHZhlWLLZMKn/8OXALrqET+FySPIKskwYEdJ5rOV2aDlD6hlo67qCNFGUIMZWGFFc9L2os1g==
+react-native-vision-camera@^4.0.0-beta.6:
+  version "4.0.0-beta.6"
+  resolved "https://registry.npmjs.org/react-native-vision-camera/-/react-native-vision-camera-4.0.0-beta.6.tgz"
+  integrity sha512-ydRV5JeNqsx944f8DhReaA9KYvhvQtRCedCCSFGx7z6VH0cXQAC0hXSGYuCrVQ+1hxcP9qWKvSMgJ0Qtcr8Mig==
 
 react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@>=0.40.0, react-native@>=0.42.0, react-native@>=0.46, react-native@>=0.48.4, react-native@>=0.59, react-native@>=0.59.0, react-native@>=0.69, react-native@0.73.3:
   version "0.73.3"

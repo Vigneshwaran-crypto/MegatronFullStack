@@ -1,6 +1,13 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   textFontFace,
   textFontFaceLight,
@@ -8,21 +15,40 @@ import {
 } from '../../../../common/styles';
 import {colors} from '../../../../common/colors';
 import {sSize} from '../../../../common/utils';
-import {serverUrl} from '../../../../common/constant';
+import {filePath, serverUrl} from '../../../../common/constant';
 import moment from 'moment';
+import {deleteCommentAct} from '../../../../redux/authAction';
+import {apiCallAndStore} from '../../../../redux/middleware';
 
 const CommentItem = ({item, index}) => {
+  const dispatch = useDispatch();
   const userDetails = useSelector(({main}) => main.userDetails);
 
-  const userImage = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${item.userImage}`;
+  const userImage = filePath + item.userImage;
 
   const fromNow = moment(item.updatedAt).startOf('minutes').fromNow();
 
-  //   .slice(0, 1) + 'h'
+  const onCmtPress = () => {
+    if (item.userId === userDetails._id)
+      Alert.alert('Delete comment', item.comment, [
+        {text: 'Cancel'},
+        {
+          text: 'Ok',
+          onPress: () => {
+            dispatch(apiCallAndStore(deleteCommentAct({id: item._id})));
+          },
+        },
+      ]);
+
+    // dispatch(deleteCommentAct({id:item._id}))
+  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.commentCont}>
+      <TouchableOpacity
+        style={styles.commentCont}
+        onLongPress={onCmtPress}
+        activeOpacity={1}>
         <View style={styles.userImageCont}>
           <Image source={{uri: userImage}} style={styles.userImage} />
         </View>
@@ -37,7 +63,7 @@ const CommentItem = ({item, index}) => {
 
           <Text style={styles.commentText}>{item.comment}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };

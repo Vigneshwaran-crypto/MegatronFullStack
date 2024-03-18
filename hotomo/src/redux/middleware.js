@@ -238,6 +238,16 @@ const mainSlice = createSlice({
             state.postComments = payload.jsonData;
             break;
 
+          case staticValues.deleteComment:
+            LOG('deleteComment_in_Reducer :', payload);
+            const id = payload.requestData.id;
+
+            state.postComments = state.postComments.filter(
+              item => item._id !== id,
+            );
+
+            break;
+
           case staticValues.commentPost:
             LOG('commentPost_in_Reducer :', payload);
             state.postComments.push(payload.jsonData);

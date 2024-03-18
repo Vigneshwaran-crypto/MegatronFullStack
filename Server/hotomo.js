@@ -4,6 +4,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import http from "http";
+import https from "https";
 import router from "./Routes/router.js";
 
 import { Server } from "socket.io";
@@ -11,12 +12,15 @@ import { chatMessage } from "./Controller/auth.js";
 import accountPath from "./megatron-bdae8-firebase-adminsdk-p3i2p-0a8ea2a265.json" assert { type: "json" }; //proper way to import json in ES6
 
 import admin from "firebase-admin";
-import { assert } from "console";
-import { type } from "os";
+import path from "path";
+import dotenv from "dotenv";
+import { isTesting } from "./Helpers/helpers.js";
 
 const app = express();
 
-const server = http.createServer(app);
+const __dirname = path.resolve();
+
+const server = isTesting ? http.createServer(app) : https.createServer(app);
 const io = new Server(server);
 
 // The body-parser middleware is used to parse the incoming request body in various formats, such as JSON or URL-encoded data. It extracts the data and makes it available in the req.body object for further processing.
@@ -24,10 +28,15 @@ app.use(bodyParser.json({ limit: "32mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "32mb", extended: true }));
 
 // accepting image files
-app.use(
-  "/api/Users/admin/Desktop/Vignesh/imageBank",
-  express.static("/Users/admin/Desktop/Vignesh/imageBank")
-);
+isTesting
+  ? app.use(
+      "/api/Users/admin/Desktop/Vignesh/imageBank",
+      express.static("/Users/admin/Desktop/Vignesh/imageBank")
+    )
+  : app.use("/api/opt/hotomoAssets", express.static("/opt/hotomoAssets"));
+
+// configuring environment variable
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 //CORS is a security feature implemented by web browsers to prevent cross-origin requests
 app.use(cors());

@@ -2,7 +2,7 @@ import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {LOG, sSize} from '../../../common/utils';
 import {colors} from '../../../common/colors';
-import {serverUrl} from '../../../common/constant';
+import {filePath, serverUrl} from '../../../common/constant';
 import {textFontFace} from '../../../common/styles';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -12,7 +12,7 @@ import {apiCallAndStore} from '../../../redux/middleware';
 const ChatItem = ({item, index}) => {
   const dispatch = useDispatch();
   const nav = useNavigation();
-  const profileImageUrl = `${serverUrl}Users/admin/Desktop/Vignesh/imageBank/${item.profileImage}`;
+  const profileImageUrl = filePath + item.profileImage;
   const userDetails = useSelector(({main}) => main.userDetails);
 
   const onItemPress = () => {
