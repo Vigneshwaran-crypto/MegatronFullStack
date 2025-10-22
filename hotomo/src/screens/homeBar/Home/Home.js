@@ -251,7 +251,7 @@ const Home = memo(() => {
             onEndReached={onPostsEndReached}
             contentContainerStyle={{paddingBottom: sSize.width * 0.14}}
             ListFooterComponent={<View style={styles.postListFooter}></View>}
-            ListHeaderComponent={<View style={styles.storyCont}></View>}
+            // ListHeaderComponent={<View style={styles.storyCont}></View>}
             showsVerticalScrollIndicator={false}
             onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfig={{
@@ -322,7 +322,7 @@ const Home = memo(() => {
           wrapper: styles.rbWrapper,
         }}>
         <View style={styles.postOptionsHolder}>
-          {menuPost.userId === userDetails._id.toString() ? (
+          {menuPost.userId === userDetails?._id.toString() ? (
             <TouchableOpacity
               style={styles.optionCont}
               onPress={postOptionsPress.bind(this, 1)}>
@@ -380,8 +380,6 @@ const styles = StyleSheet.create({
   feedCont: {
     flex: 1,
     marginTop: 3,
-    // borderWidth: 1,
-    // marginBottom: 100,
   },
   postFeedCont: {
     flex: 1,

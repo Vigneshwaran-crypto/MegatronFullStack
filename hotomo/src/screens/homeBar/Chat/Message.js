@@ -15,7 +15,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {useDispatch, useSelector} from 'react-redux';
 import io from 'socket.io-client';
 import {colors} from '../../../common/colors';
-import {filePath} from '../../../common/constant';
+import {filePath, socketPath} from '../../../common/constant';
 import {textFontFace, textFontFaceLight} from '../../../common/styles';
 import {LOG, sSize} from '../../../common/utils';
 import {clearChats} from '../../../redux/authAction';
@@ -62,7 +62,7 @@ const Message = props => {
     msgListRef.current.scrollToEnd({animated: true});
     LOG('clicked user in chatBox :', item);
 
-    const socket = io('http://172.16.16.17:5000');
+    const socket = io(socketPath);
 
     socket.on('chat', msgs => {
       LOG('message in client socket :', msgs);
@@ -122,7 +122,7 @@ const Message = props => {
 
   const sentMessage = () => {
     if (msg) {
-      const socket = io('http://172.16.16.17:5000');
+      const socket = io(socketPath);
 
       const msgReq = {
         senderId: userDetails._id,

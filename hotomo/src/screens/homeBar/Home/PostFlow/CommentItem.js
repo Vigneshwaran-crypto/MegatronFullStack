@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   },
   commentCont: {
     padding: 5,
-    marginVertical: 3,
+    marginVertical: 5,
     flexDirection: 'row',
     height: 'auto',
     alignSelf: 'flex-start',
@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingHorizontal: 6,
     width: '70%',
+    // borderWidth: 1,
   },
   userNameView: {
     flexDirection: 'row',
@@ -116,9 +117,10 @@ const styles = StyleSheet.create({
     fontFamily: textFontFaceLight,
     color: colors.matteBlack,
     fontSize: sSize.width * 0.033,
-    lineHeight: 13,
-    marginTop: 5,
+    // lineHeight: 13,
+    marginTop: 3,
     marginStart: 5,
+    // borderWidth: 1,
   },
 });
 

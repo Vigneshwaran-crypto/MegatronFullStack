@@ -15,6 +15,8 @@ export const filePath = isTesting
   ? serverUrl + appConfig.testing.filesPath
   : serverUrl + appConfig.production.filesPath;
 
+export const socketPath = 'http://192.168.29.79:5000';
+
 export const AuthToken = '';
 
 export const staticValues = {

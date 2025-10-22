@@ -11,9 +11,14 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {filePath} from '../common/constant';
 
 const ActionBar = () => {
   const nav = useNavigation();
+  const userDetails = useSelector(({main}) => main.userDetails);
+
+  const profileImageUrl = filePath + userDetails.profileImage;
 
   const onOptionsPress = to => {
     //profile Press
@@ -39,11 +44,16 @@ const ActionBar = () => {
   return (
     <View style={styles.container}>
       <View style={styles.profileImageView}>
-        <TouchableOpacity onPress={onOptionsPress.bind(this, 0)}>
+        <TouchableOpacity
+          style={styles.profileCont}
+          onPress={onOptionsPress.bind(this, 0)}>
           <Image
-            source={require('../../assets/appIcons/appIcon.png')}
+            // source={require('../../assets/appIcons/appIcon.png')}
+            source={{uri: profileImageUrl}}
             style={styles.profImage}
           />
+
+          <Text style={styles.uNametxt}>{userDetails.userName}</Text>
         </TouchableOpacity>
       </View>
 
@@ -81,6 +91,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 15,
   },
+
+  profileCont: {
+    flexDirection: 'row',
+    gap: 10,
+    display: 'flex',
+    alignItems: 'center',
+  },
+
+  uNametxt: {
+    fontSize: 17,
+  },
+
   profImage: {
     height: sSize.width * 0.09,
     width: sSize.width * 0.09,

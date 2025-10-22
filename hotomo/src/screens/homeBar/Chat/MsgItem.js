@@ -24,7 +24,7 @@ const MsgItem = ({item, index}) => {
         ]}>
         <Text style={styles.msgText}>{item.msg}</Text>
         <Text style={styles.dateText}>
-          {moment(item.updateAt).format('LT')}
+          {moment(item.updatedAt).local().format('LT')}
         </Text>
       </View>
     </View>
@@ -34,7 +34,7 @@ const MsgItem = ({item, index}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginVertical: 2,
+    marginVertical: 5,
   },
   msgHolder: {
     flex: 1,

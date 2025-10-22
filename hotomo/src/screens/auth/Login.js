@@ -60,14 +60,14 @@ const Login = () => {
     LOG('userDetails in LOGIN :', user);
   }, [user]);
 
-  useEffect(() => {
-    setMail('sela@gmail.com');
-    setPass('12345');
+  // useEffect(() => {
+  //   setMail('sela@gmail.com');
+  //   setPass('12345');
 
-    const mails = 'viki@gmail.com';
+  //   const mails = 'viki@gmail.com';
 
-    console.log(mails.split('@')[0]);
-  }, []);
+  //   console.log(mails.split('@')[0]);
+  // }, []);
 
   const onLogPress = () => {
     if (!mail) {
@@ -92,12 +92,12 @@ const Login = () => {
           style={styles.mentorImage}
         />
 
-        <Text style={styles.desText}>Welcome to the 3D world</Text>
+        <Text style={styles.desText}>Log in. Tune in. Be you.</Text>
       </View>
 
       <View style={styles.AuthContent}>
         <View style={styles.inputContents}>
-          <Text style={styles.labelText}>Email Or Phone</Text>
+          <Text style={styles.labelText}>Email</Text>
           <TextInput
             style={styles.inputField}
             onChangeText={setMail}
@@ -107,7 +107,7 @@ const Login = () => {
           <Text style={[styles.labelText, {marginTop: 10}]}>Password</Text>
           <TextInput
             style={styles.inputField}
-            // secureTextEntry
+            secureTextEntry
             onChangeText={setPass}
             value={pass}
           />

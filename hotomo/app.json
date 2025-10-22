@@ -6,7 +6,7 @@
     "filesPath": "bm.learning.betalearnings.com/opt/hotomoAssets/"
   },
   "testing": {
-    "serverUrl": "http://172.16.16.17:5000/api/",
-    "filesPath": "Users/admin/Desktop/Vignesh/imageBank/"
+    "serverUrl": "http://192.168.29.79:5000/api/",
+    "filesPath": "Users/user/Desktop/Vignesh/imageBank/"
   }
 }
